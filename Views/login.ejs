@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page | MeetTheMakers</title>
+  <link rel="stylesheet" href="/styles/mainPages/login.css">
+  <link rel="stylesheet" href="/styles/partialStyle/flashcard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <%-include('./partials/navbar') -%>
+  <section class="signin-container">
+    <div class="form login">
+      <div class="form-content">
+        <header class="heading">Welcome Back</header>
+
+        <form action="/login" method="post">
+          <div class="field input-field">
+            <i class="fas fa-envelope field-icon"></i>
+            <input type="email" placeholder="Email Address" class="input" name="email" id="email" required>
+            <b><label id="emailLoginForm" class="forms"></label></b>
+          </div>
+
+          <div class="field input-field">
+            <i class="fas fa-lock field-icon"></i>
+            <input type="password" placeholder="Password" class="input password" name="password" id="password" required>
+            <span class="password-toggle" id="password-toggle">
+              <i class="far fa-eye"></i>
+            </span>
+            <b><label id="passwordLoginForm" class="forms"></label></b>
+          </div>
+
+        
+          <div class="field button-field">
+            <button type="submit" class="login-btn">Log In</button>
+          </div>
+        </form>
+
+        <div class="form-link">
+          <span>Don't have an account?<a href="/signup" class="signup-link">Sign up</a></span>
+        </div>
+      </div>
+    </div>  
+  </section>
+</body>
+</html>
+  <script src="/js/login.js"></script>
+  <script src="/js/flashcard.js"></script>
+  <%-include('./partials/footer')%>
+</body>
+</html>

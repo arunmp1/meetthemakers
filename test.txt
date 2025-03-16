@@ -1,0 +1,91 @@
+.blog-posts {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.post-card {
+  display: flex;  /* Horizontal layout */
+  align-items: center;  /* Center content vertically */
+  justify-content: space-between;  /* Space out image and content */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.post-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.post-card img {
+  max-width: 150px;  /* Adjusted image size */
+  height: auto;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.post-card .content {
+  flex-grow: 1;  /* Content will take up remaining space */
+}
+
+.post-card h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.post-card p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.post-card .date,
+.post-card .author {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.post-card .heading {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.post-card a,
+.post-card button a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.post-card a,
+.post-card button {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.post-card a:hover,
+.post-card button:hover {
+  background-color: #0056b3;
+}
+
+.post-card button {
+  border: none;
+  cursor: pointer;
+}
+
+button a {
+  color: white; /* Ensures that the text inside button is white */
+}

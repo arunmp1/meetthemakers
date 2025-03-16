@@ -1,0 +1,114 @@
+/* Ensure full width for navbar and body */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%; /* Ensure full width */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  padding: 10px;
+  width: 100%; /* Ensures the navbar takes full width */
+  box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+.navbar .logo {
+  margin-right: 20px; /* Optional: Add some space between logo and nav links */
+}
+
+.navbar nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0; /* Reset any default margin */
+}
+
+.navbar nav ul li {
+  margin-right: 20px; /* Space between links */
+}
+
+.navbar nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar nav a:hover {
+  background-color: #ff523b;
+  padding: 5px;
+}
+
+/* Container for the form */
+.container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  margin: 50px auto; /* Center the form container with some space */
+}
+
+.form-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.file-input-box, .text-input-box, .textarea-container {
+  text-align: left;
+}
+
+label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+input[type="text"], input[type="file"], textarea, input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 150px;
+  resize: none;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
