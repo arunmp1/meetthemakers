@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Blog Post</title>
+  <link rel="stylesheet" href="/styles/mainPages/edit/edit.css"> <!-- Assuming you have the styles in a separate file -->
+</head>
+<body>
+  <!-- Navbar Section -->
+  <%- include('./partials/navbar') %>
+
+  <!-- Main Content Section -->
+  <section class="container">
+    <header class="form-header">
+      <h1>Edit Your Blog Post</h1>
+    </header>
+    <form action="/Requirement/update/<%=post._id%>" method="post" class="form">
+      <!-- Hidden field to pass the blog ID for updating -->
+      <input type="hidden" name="blogId" value="">
+      
+    
+      <div class="text-input-box">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="heading" value="<%=post.heading%>" placeholder="Enter your blog title" required>
+      </div>
+      
+      <div class="textarea-container">
+        <label for="body">Body</label>
+        <textarea id="body" name="content"  placeholder="Write your blog content here" required><%=post.content%></textarea>
+      </div>
+    
+      <div class="textarea-container">
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" value="<%=post.price%>" placeholder="Enter Your Price here" required>
+      </div>
+
+      <div class="textarea-container">
+        <label for="Quantity">Quantity</label>
+        <input type="number" id="Quantity" name="quantity" value="<%=post.quantity%>" placeholder="Enter Your Quantity" required>
+      </div>
+
+      <button type="submit">Update Blog</button>
+    </form>
+  </section>
+</body>
+</html>

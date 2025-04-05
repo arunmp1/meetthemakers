@@ -1,0 +1,20 @@
+ <section class="content">
+    <div class="main-content">
+      <h1 class="recent-post-title">Recent Posts</h1>
+      <% blog.forEach(element => { %>
+        <article class="post">
+          <img src="<%= element.coverImage %>" alt="Post Image" class="post-image">
+          <div class="post-preview">
+            <h2><a href="#"><%= element.title %></a></h2>
+            <p class="post-meta">
+              <i class="far fa-user"></i> <%= element.createdBy.name %> &nbsp;&nbsp;
+              <i class="far fa-calendar"></i> <%= new Date(element.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
+            </p>
+            <a href="/blog/<%= element.id %>" class="btn read-more" style="color: white;">Read More</a>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+

@@ -1,0 +1,109 @@
+<!-- Product Creation Hub -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles/mainPages/allRequirements.css">
+  <link rel="stylesheet" href="/styles/partialStyle/navbar.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <title>Post Requirement & Discover Makers</title>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+      <div class="logo">
+          <img src="/images/logo/meetthemakerslogo.png" width="200px">
+      </div>
+      <nav>
+          <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/discovers">Product Creation Hub</a></li>
+              <li><a href="/creation">Unique Product Pioneers</a></li>
+              <li><a href="/products">Market</a></li>
+              <li><a href="/about">About Us</a></li>
+              <li><a href="/contactus">Contact Us</a></li>
+              <% if(!locals.user){ %>
+                  <li><a href="/signup">Sign Up</a></li>
+                  <li><a href="/login">Log In</a></li>
+              <% }else{ %>
+                  <li><a href="/profile">Hello <%= user.name %></a></li>
+                  <li class="cart-icon">
+                    <a href="/cart">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                </li>
+                  <li><a href="/logout">Log Out</a></li>
+                 
+              <% } %>
+  
+          </ul>
+      </nav>
+  </div>
+
+  <!-- Main Content Section -->
+  <main>
+    <!-- Form Section (Above) -->
+    <% if(locals.user){ %>
+    <section class="container">
+
+        <header class="form-header">
+          <h1>Welcome, <%=user.name%></h1>
+        </header>
+
+        <form action="/requirement" method="post"  class="form">
+        <div class="text-input-box">
+          <label for="title">Heading</label>
+          <input type="text" id="title" name="heading" placeholder="Enter your blog title">
+        </div>
+        <div class="textarea-container">
+          <label for="body">Content</label>
+          <textarea id="body" name="content" placeholder="Write your blog content here"></textarea>
+        </div>
+        <div class="text-input-box">
+          <label for="price">Price</label>
+          <input type="number" id="number" name="price" placeholder="Enter Your Price">
+        </div>
+        <div class="text-input-box">
+          <label for="quantity">Quantity</label>
+          <input type="number" name="quantity" id="" placeholder="Enter Your Quantity">
+        </div>
+        
+        <button type="submit">Publish the Requirement</button>
+      </form>
+    </section>
+    <% } %>
+
+    <!-- Posts Section (Below the form) -->
+    
+    <section class="posts-section">
+      <h2>Discover Makers</h2>
+      <div class="posts-container">
+        <!-- Dummy Post Cards -->
+        <% requirement.forEach(element => { %>
+        <div class="post-card">
+          <h3><%=element.heading %></h3>
+          
+          <p><strong>Price: </strong> ₹<%= element.price %></p>
+          <p><strong>Quantity Required: </strong> <%= element.quantity %> Required</p>
+          <p><strong>Posted By: </strong><%= element.user.name %></p>
+          <p><strong>Likes: </strong><%= element.likes.length%></p>
+          <a href="/read/<%=element._id%>" class="view-details">View Details</a>
+        </div>
+        <% }) %>
+        
+        
+      </div>
+
+      </div>
+      
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <%- include('./partials/footer') %>
+</body>
+
+</html>
