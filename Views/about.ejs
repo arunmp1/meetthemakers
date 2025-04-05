@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>About Us | MeetTheMakers</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+      
+        .about-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            max-width: 1000px;
+            margin: 30px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .about-section h1 {
+            color: #ff6600;
+        }
+        .row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .col-2 {
+            width: 45%;
+            padding: 20px;
+            background: #f8f8f8;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+ 
+
+    </style>
+</head>
+<body>
+   <%-include('./partials/navbar')%>
+    <div class="about-section">
+        <h1>About Us</h1>
+        <p>
+            At <strong>MeetTheMakers</strong>, we believe in the power of creativity and innovation. Our platform serves as a bridge, connecting talented makers with passionate buyers who value unique, handmade creations.
+        </p>
+        <p>
+            Founded with the mission to support creators and nurture entrepreneurship, MeetTheMakers celebrates craftsmanship and the individuals behind each masterpiece.
+        </p>
+        <div class="row">
+            <div class="col-2">
+                <h2>Our Vision</h2>
+                <p>To create a global hub where creativity meets opportunity, empowering makers to thrive in a supportive and dynamic marketplace.</p>
+            </div>
+            <div class="col-2">
+                <h2>Our Mission</h2>
+                <p>To provide an inclusive platform that nurtures creativity, promotes craftsmanship, and connects makers with enthusiasts who appreciate handmade goods.</p>
+            </div>
+        </div>
+    </div>
+    <%-include('./partials/footer') %>
+ 
+</body>
+</html>

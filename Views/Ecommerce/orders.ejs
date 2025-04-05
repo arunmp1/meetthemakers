@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeetTheMakers | Create Order</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="/styles/mainPages/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .order-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .order-header h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .order-form-section {
+            margin-bottom: 30px;
+        }
+        
+        .order-form-section h2 {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .payment-method:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .payment-method input {
+            margin-right: 10px;
+        }
+        
+        .order-summary {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .order-summary-total {
+            font-weight: 600;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-back {
+            display: inline-block;
+            margin-top: 15px;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .btn-back:hover {
+            color: #333;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="/images/logo/meetthemakerslogo.png" width="200px">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/discovers">Product Creation Hub</a></li>
+                <li><a href="/creation">Unique Product Pioneers</a></li>
+                <li><a href="/products">Market</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contactus">Contact Us</a></li>
+                <% if(!locals.user){ %>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/login">Log In</a></li>
+                <% }else{ %>
+                    <li><a href="/profile">Hello <%= user.name %></a></li>
+                    <li class="cart-icon">
+                        <a href="/cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
+                    </li>
+                    <li><a href="/logout">Log Out</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="order-container">
+        <div class="order-header">
+            <h1>Complete Your Order</h1>
+        </div>
+        
+        <form action="/order/create" method="POST">
+            <!-- Shipping Information -->
+            <div class="order-form-section">
+                <h2>Shipping Information</h2>
+                <div class="form-group">
+                    <label for="street">Street Address</label>
+                    <input type="text" id="street" name="shippingAddress[street]" class="form-control" required value="<%=user.addresses[0].street%>">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="shippingAddress[city]" class="form-control" required value="<%=user.addresses[0].city%>">
+                </div>
+                <div class="form-group">
+                    <label for="postalCode">Postal Code</label>
+                    <input type="text" id="postalCode" name="shippingAddress[postalCode]" class="form-control" required value="<%=user.addresses[0].postalCode%>">
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="shippingAddress[country]" class="form-control" required value="<%=user.addresses[0].country %>">
+                </div>
+            </div>
+        
+            <!-- Payment Method -->
+            <div class="order-form-section">
+                <h2>Payment Method</h2>
+                <div class="payment-methods">
+                    <label class="payment-method">
+                        <input type="radio" name="paymentMethod" value="Credit Card" required checked> Credit Card
+                    </label>
+                    <label class="payment-method">
+                        <input type="radio" name="paymentMethod" value="UPI" required> UPI
+                    </label>
+                    <label class="payment-method">
+                        <input type="radio" name="paymentMethod" value="Bank Transfer" required> Bank Transfer
+                    </label>
+                </div>
+            </div>
+        
+            <!-- Order Summary -->
+            <div class="order-form-section">
+                <h2>Order Summary</h2>
+                <div class="order-summary">
+                    <% if(cart && cart.cartItems.length > 0) { %>
+                        <% cart.cartItems.forEach(item => { %>
+                            <div class="order-summary-item">
+                                <span><%= item.products.name %> x <%= item.quantity %></span>
+                                <span>₹<%= (item.products.price * item.quantity).toFixed(2) %></span>
+                            </div>
+                        <% }) %>
+        
+                        <% 
+                            let subTotal = cart.cartItems.reduce((total,item)=> total + (item.products.price * item.quantity),0)
+                            let tax = Math.round(subTotal * 0.18)
+                            let shipping = subTotal > 0 ? 100 : 0
+                            let total = subTotal + tax + shipping
+                        %>
+        
+                        <div class="order-summary-item">
+                            <span>SubTotal:</span>
+                            <span>₹ <%= subTotal.toFixed(2) %></span>
+                        </div>
+                        <div class="order-summary-item">
+                            <span>Tax (18% GST): </span>
+                            <span>₹ <%= tax %></span>
+                        </div>
+                        <div class="order-summary-item">
+                            <span>Shipping Fees:</span>
+                            <span>₹ <%= shipping %></span>
+                        </div>
+                        <div class="order-summary-total order-summary-item">
+                            <span>Total:</span>
+                            <span>₹ <%= total %></span>
+                        </div>
+        
+                        <!-- Hidden Inputs for Tax and Shipping -->
+                        <input type="hidden" name="taxPrice" value="<%= tax %>">
+                        <input type="hidden" name="shippingPrice" value="<%= shipping %>">
+                        <input type="hidden" name="totalPrice" value="<%= total %>">
+                    <% } else { %>
+                        <p>Your cart is empty. Please add items to your cart before proceeding.</p>
+                    <% } %>
+                </div>
+            </div>
+        
+            <button type="submit" class="btn-submit">Place Order</button>
+        </form>
+        <a href="/cart" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Cart
+        </a>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>MeetTheMakers</h3>
+                <p>A global marketplace for unique, handmade items. We connect creative makers with customers looking for something special.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+            </div>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="copyright">
+            <p>© 2024 MeetTheMakers. All rights reserved. | Designed with <span class="heart">❤</span> by the MeetTheMakers team.</p>
+        </div>
+    </footer>
+</body>
+</html>

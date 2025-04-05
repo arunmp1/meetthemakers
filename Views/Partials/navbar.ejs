@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="/styles/partialStyle/navbar.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<div class="navbar">
+    <div class="logo">
+        <img src="/images/logo/meetthemakerslogo.png" width="200px">
+    </div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/discovers">Product Creation Hub</a></li>
+            <li><a href="/creation">Unique Product Pioneers</a></li>
+            <li><a href="/products">Market</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contactus">Contact Us</a></li>
+            <% if(!locals.user){ %>
+                <li><a href="/signup">Sign Up</a></li>
+                <li><a href="/login">Log In</a></li>
+            <% }else{ %>
+                <li><a href="/profile">Hello <%= user.name %></a></li>
+                <li class="cart-icon">
+                    <a href="/cart">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                </li>
+                <li><a href="/logout">Log Out</a></li>
+            <% } %>
+        </ul>
+    </nav>
+</div>

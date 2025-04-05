@@ -1,0 +1,283 @@
+<!-- views/ordersList.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Orders List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #fff;
+      padding: 15px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .order-card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .order-header {
+      background-color: #f9f9f9;
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .order-date {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .order-id {
+      font-weight: bold;
+    }
+    .order-body {
+      padding: 20px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .status-paid {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-not-paid {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .status-delivered {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-not-delivered {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .order-info {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .order-info-col {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 15px;
+    }
+    .order-info-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .order-items {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .order-items th {
+      text-align: left;
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .order-items td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .order-total {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .total-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 5px;
+    }
+    .total-label {
+      width: 150px;
+      text-align: right;
+      padding-right: 20px;
+    }
+    .total-value {
+      width: 100px;
+      text-align: right;
+      font-weight: bold;
+    }
+    .final-total {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+      border-top: 1px solid #ddd;
+      padding-top: 5px;
+      margin-top: 5px;
+    }
+    .no-orders {
+      background-color: #fff;
+      padding: 30px;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .error-message {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <%-include('../partials/navbar') %>
+
+  <div class="container">
+    <h1>Your Orders</h1>
+    
+    <% if (typeof error !== 'undefined') { %>
+      <div class="error-message">
+        <%= error %>
+      </div>
+    <% } %>
+    
+    <% if (orders.length === 0) { %>
+      <div class="no-orders">
+        <p>You have no orders yet.</p>
+        <a href="/products">Continue Shopping</a>
+      </div>
+    <% } else { %>
+      <% orders.forEach(function(order) { %>
+        <div class="order-card">
+          <div class="order-header">
+            <div>
+              <span class="order-id">Order #<%= order._id.toString().substring(0, 8) %></span>
+              <span class="order-date">Placed on <%= new Date(order.createdAt).toLocaleDateString() %></span>
+            </div>
+            <div>
+              <span class="status-badge <%= order.isPaid ? 'status-paid' : 'status-not-paid' %>">
+                <%= order.isPaid ? 'Paid' : 'Payment Pending' %>
+              </span>
+              <span class="status-badge <%= order.isDelivered ? 'status-delivered' : 'status-not-delivered' %>">
+                <%= order.isDelivered ? 'Delivered' : 'Processing' %>
+              </span>
+            </div>
+          </div>
+          
+          <div class="order-body">
+            <div class="order-info">
+              <div class="order-info-col">
+                <div class="order-info-title">Shipping Address</div>
+                <div>
+                  <%= order.shippingAddress.street %><br>
+                  <%= order.shippingAddress.city %>, <%= order.shippingAddress.postalCode %><br>
+                  <%= order.shippingAddress.country %>
+                </div>
+              </div>
+              
+              <div class="order-info-col">
+                <div class="order-info-title">Payment Method</div>
+                <div><%= order.paymentMethod %></div>
+                
+                <% if (order.isPaid) { %>
+                  <div class="order-info-title" style="margin-top: 10px;">Paid On</div>
+                  <div><%= new Date(order.paidAt).toLocaleString() %></div>
+                <% } %>
+              </div>
+              
+              <% if (order.isDelivered) { %>
+                <div class="order-info-col">
+                  <div class="order-info-title">Delivered On</div>
+                  <div><%= new Date(order.deliveredAt).toLocaleString() %></div>
+                </div>
+              <% } %>
+            </div>
+            
+            <table class="order-items">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% order.orderItems.forEach(function(item) { %>
+                  <tr>
+                    <td>
+                      <% if (item.product && item.product.name) { %>
+                        <%= item.product.name %>
+                      <% } else { %>
+                        Product
+                      <% } %>
+                    </td>
+                    <td><%= item.quantity %></td>
+                    <td>₹<%= item.price.toFixed(2) %></td>
+                    <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+            
+            <div class="order-total">
+              <div class="total-row">
+                <div class="total-label">Items Total:</div>
+                <div class="total-value">
+                  ₹<%= order.orderItems.reduce(function(sum, item) { 
+                    return sum + (item.price * item.quantity); 
+                  }, 0).toFixed(2) %>
+                </div>
+              </div>
+              
+              <div class="total-row">
+                <div class="total-label">Shipping:</div>
+                <div class="total-value">₹<%= order.shippingPrice.toFixed(2) %></div>
+              </div>
+              
+              <div class="total-row">
+                <div class="total-label">Tax:</div>
+                <div class="total-value">₹<%= order.taxPrice.toFixed(2) %></div>
+              </div>
+              
+              <div class="total-row final-total">
+                <div class="total-label">Total:</div>
+                <div class="total-value">₹<%= order.totalPrice.toFixed(2) %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } %>
+  </div>
+</body>
+</html>

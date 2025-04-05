@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Dashboard | MeetTheMakers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="/styles/mainPages/profile/main.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+    
+    <div class="profile-container">
+        <div class="profile-header">     
+            <div class="profile-info">
+                <h1 class="greeting">Hello, <%=user.name%></h1>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3>Creative Items</h3>
+                    <div class="section-icon">🎨</div>
+                </div>
+                <div class="section-content">
+                    <p>Manage your creative listings and track your item performance</p>
+                    <a href="/post/<%=user._id%>" class="btn">Manage Listings</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3>Requirement Items</h3>
+                    <div class="section-icon">🛒</div>
+                </div>
+                <div class="section-content">
+                    <p>View your requirement history</p>
+                    <a href="/profile/requirements" class="btn">View Requirements</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3>My Orders</h3>
+                    <div class="section-icon">📦</div>
+                </div>
+                <div class="section-content">
+                    <p>View your orders and track their delivery status</p>
+                    <a href="/ordersList" class="btn">View Orders</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="activity-feed">
+            <h3 class="activity-title">Recent Activity</h3>
+            <% if (typeof activities === 'undefined' || activities.length === 0) { %>
+                <div class="activity-item">No recent activity</div>
+            <% } else { %>
+                <% activities.forEach(activity => { %>
+                    <div class="activity-item">
+                        <div class="activity-text">
+                            <% if (activity.type === 'post_comments' || activity.type === 'requirement_comments') { %>
+                                <strong>New comment:</strong> <%= activity.user %> commented on your "<%= activity.title %>"
+                            <% } else if (activity.type === 'post' || activity.type === 'requirement') { %>
+                                <strong>New Like:</strong> Someone liked your "<%= activity.title %>"
+                            <% } else if (activity.type === 'order_placed') { %>
+                                <strong>Order Placed:</strong> You placed an order for $<%= activity.amount %>
+                            <% } else if (activity.type === 'order_status') { %>
+                                <strong>Order Update:</strong> Your order #<%= activity.orderId %> has been <%= activity.status %>
+                            <% } %>
+                            <div class="activity-time">
+                                <%= activity.time %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+    
+    <%- include('./partials/footer') %>
+</body>
+</html>

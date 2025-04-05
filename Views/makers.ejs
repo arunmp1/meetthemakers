@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/mainPages/makers.css">
+    <link rel="stylesheet" href="/styles/partialStyle/navbar.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Post Requirement & Discover Makers</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="/images/logo/meetthemakerslogo.png" width="200px">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/discovers">Product Creation Hub</a></li>
+                <li><a href="/creation">Unique Product Pioneers</a></li>
+                <li><a href="/products">Market</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contactus">Contact Us</a></li>
+                <% if (!locals.user) { %>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/login">Log In</a></li>
+                <% } else { %>
+                    <li><a href="/profile">Hello <%= user.name %></a></li>
+                    <li class="cart-icon">
+                        <a href="/cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
+                    </li>
+                    <li><a href="/logout">Log Out</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content Section -->
+    <main>
+        <% if (locals.user) { %>
+            <section class="container">
+                <header class="form-header">
+                    <h1>Welcome, <%= user.name %></h1>
+                </header>
+
+                <form action="/creation" method="post" enctype="multipart/form-data" class="form">
+                    <div class="file-input-box">
+                        <label for="coverImage">Upload Cover Image</label>
+                        <input name="coverImage" type="file" id="coverImage" accept="image/*" required>
+                    </div>
+                    <div class="text-input-box">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" placeholder="Enter your blog title" required>
+                    </div>
+                    <div class="textarea-container">
+                        <label for="body">Body</label>
+                        <textarea id="body" name="body" placeholder="Write your blog content here" required></textarea>
+                    </div>
+                    <button type="submit">Publish Blog</button>
+                </form>
+            </section>
+        <% } %>
+
+        <!-- Blog Content Section -->
+        <section class="blog-posts">
+            <% post.forEach(element => { %>
+                <div class="post-card">
+                    <% if (element.coverImageBase64) { %>
+                        <img src="<%= element.coverImageBase64 %>" alt="<%= element.title %>">
+                    <% } else { %>
+                        <img src="/images/placeholder.jpg" alt="No image available">
+                    <% } %>
+                    <div class="content">
+                        <h2><%= element.title %></h2>
+                        <p class="date"><strong>Date:</strong> <%= element.Date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                        <p class="author"><strong>Author:</strong> <%= element.createdBy.name %></p>
+                        <p><strong>Likes:</strong> <%= element.likes.length %></p>
+                        <a href="/ImageRead/<%= element._id %>">Read More</a>
+                    </div>
+                </div>
+            <% }) %>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <%- include('./partials/footer') %>
+</body>
+</html>

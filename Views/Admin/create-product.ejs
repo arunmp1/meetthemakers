@@ -1,0 +1,208 @@
+<!-- ./views/Admin/create-product.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Product</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6600;
+            --secondary-color: #222;
+            --accent-color: #ff523b;
+            --light-bg: #f8f8f8;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+        .product-form {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+        textarea.form-control { min-height: 120px; resize: vertical; }
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .preview-item {
+            width: 100px;
+            height: 
+            100px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .submit-btn:hover { background-color: var(--accent-color); }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+            background-color: var(--light-bg);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .file-upload input[type="file"] {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+        }
+        .upload-label {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .upload-label:hover { background-color: var(--accent-color); }
+        .file-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="form-title">Create New Product</h1>
+        <form class="product-form" action="/admin/product/create" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name" class="form-label">Product Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Enter product name" required>
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="description" class="form-control" placeholder="Enter product description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="price" class="form-label">Price (₹)</label>
+                <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" placeholder="Enter price" required>
+            </div>
+            <div class="form-group">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="">Select a category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="home">Home & Kitchen</option>
+                    <option value="books">Books</option>
+                    <option value="toys">Toys</option>
+                    <option value="beauty">Beauty</option>
+                    <option value="sports">Sports</option>
+                    <option value="food">Food & Beverages</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stock" class="form-label">Stock Quantity</label>
+                <input type="number" id="stock" name="stock" class="form-control" min="0" placeholder="Enter stock quantity" required>
+            </div>
+            <div class="form-group">
+                <label for="createdByEmail" class="form-label">Created By (User Email)</label>
+                <input type="email" id="createdByEmail" name="createdByEmail" class="form-control" placeholder="Enter creator's email" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Product Images</label>
+                <div class="file-upload">
+                    <label for="images" class="upload-label">Choose Images</label>
+                    <input type="file" id="images" name="images" multiple accept="image/*" onchange="previewImages(this)" required>
+                    <div class="file-info">You can select up to 5 images (max 5MB each)</div>
+                </div>
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+            <button type="submit" class="submit-btn">Upload Product</button>
+        </form>
+    </div>
+
+    <script>
+        function previewImages(input) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            if (input.files) {
+                const maxFiles = 5;
+                const fileCount = Math.min(input.files.length, maxFiles);
+                for (let i = 0; i < fileCount; i++) {
+                    const file = input.files[i];
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'preview-item';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        div.appendChild(img);
+                        preview.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                }
+                if (input.files.length > maxFiles) {
+                    const infoText = document.querySelector('.file-info');
+                    infoText.textContent = `Only the first ${maxFiles} images will be uploaded. You selected ${input.files.length}.`;
+                    infoText.style.color = '#ff6600';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

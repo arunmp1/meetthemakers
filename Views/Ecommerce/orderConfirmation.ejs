@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation | MeetTheMakers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="/styles/mainPages/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .order-success {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .success-icon {
+            color: #4CAF50;
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .order-details {
+            margin-bottom: 30px;
+        }
+        
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        
+        .order-items {
+            margin: 20px 0;
+        }
+        
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .item-quantity {
+            margin-right: 15px;
+            background-color: #f5f5f5;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .price-summary {
+            margin-top: 20px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            font-size: 1.2em;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        
+        .shipping-address {
+            margin-top: 30px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        .payment-info {
+            margin-top: 20px;
+        }
+        
+        .action-buttons {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0 10px;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: #4267B2;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .order-status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .status-pending {
+            background-color: #FFF9C4;
+            color: #FFA000;
+        }
+        
+        .status-paid {
+            background-color: #E8F5E9;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="/images/logo/meetthemakerslogo.png" width="200px">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/discovers">Product Creation Hub</a></li>
+                <li><a href="/creation">Unique Product Pioneers</a></li>
+                <li><a href="/products">Market</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contactus">Contact Us</a></li>
+                <% if(!locals.user){ %>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/login">Log In</a></li>
+                <% }else{ %>
+                    <li><a href="/profile">Hello <%= user.name %></a></li>
+                    <li class="cart-icon">
+                        <a href="/cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
+                    </li>
+                    <li><a href="/logout">Log Out</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="order-success">
+        <div class="success-header">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1>Order Confirmed!</h1>
+            <p>Thank you for shopping with MeetTheMakers. We've received your order.</p>
+            <p>Order #<strong><%= order._id %></strong></p>
+            <p>Placed on: <%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+        </div>
+        
+        <div class="order-status <%= order.isPaid ? 'status-paid' : 'status-pending' %>">
+            <!-- <h3><%= order.isPaid ? 'Payment Received' : 'Payment Pending' %></h3> -->
+            <% if(order.isPaid) { %>
+                <p>Your payment was successful.</p>
+            <% } else { %>
+                <p>The seller will contact to you in a while!</p>
+            <% } %>
+        </div>
+
+        <div class="order-details">
+            <h2>Order Details</h2>
+            
+            <div class="order-items">
+                <% order.orderItems.forEach(item => { %>
+                    <div class="item">
+                        <div class="item-left">
+                            <div class="item-quantity">
+                                <%= item.quantity %>x
+                            </div>
+                            <div class="item-name">
+                                <%= item.product.name %>
+                            </div>
+                        </div>
+                        <div class="item-price">
+                            ₹<%= (item.price * item.quantity).toFixed(2) %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            
+            <div class="price-summary">
+                <div class="price-row">
+                    <span>Subtotal</span>
+                    <span>₹<%= (order.totalPrice - order.taxPrice - (order.shippingPrice || 0)).toFixed(2) %></span>
+                </div>
+                <div class="price-row">
+                    <span>Tax (18%)</span>
+                    <span>₹<%= order.taxPrice.toFixed(2) %></span>
+                </div>
+                <div class="price-row">
+                    <span>Shipping</span>
+                    <span>₹<%= (order.shippingPrice || 0).toFixed(2) %></span>
+                </div>
+                <div class="price-row total-row">
+                    <span>Total</span>
+                    <span>₹<%= order.totalPrice.toFixed(2) %></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="shipping-address">
+            <h3>Shipping Address</h3>
+            <p><%= order.shippingAddress.street %></p>
+            <p><%= order.shippingAddress.city %>, <%= order.shippingAddress.postalCode %></p>
+            <p><%= order.shippingAddress.country %></p>
+        </div>
+        
+        <div class="payment-info">
+            <h3>Payment Method</h3>
+            <p><%= order.paymentMethod %></p>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/products" class="btn btn-primary">Continue Shopping</a>
+            <a href="/ordersList" class="btn btn-secondary">View All Orders</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>MeetTheMakers</h3>
+                <p>A global marketplace for unique, handmade items. We connect creative makers with customers looking for something special.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+            </div>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="copyright">
+            <p>© 2024 MeetTheMakers. All rights reserved. | Designed with <span class="heart">❤</span> by the MeetTheMakers team.</p>
+        </div>
+    </footer>
+</body>
+</html>
