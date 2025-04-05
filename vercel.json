@@ -6,7 +6,6 @@
       "use": "@vercel/node"
     }
   ],
-  "installCommand": "npm install && npm install -g node-gyp && npm rebuild bcrypt --build-from-source",
   "routes": [
     {
       "src": "/(.*)",
