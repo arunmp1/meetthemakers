@@ -1133,23 +1133,27 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
 
     // Validate required fields
     if (!name || !price || !category || !stock || !createdByEmail) {
-      return res.status(400).send('All fields are required');
-    }
-
-    // Check file count (Multer limits to 5, but explicit check for clarity)
-    if (req.files.length > 5) {
-      return res.status(400).send('You can\'t upload more than 5 images. Only 5 are allowed.');
+      return res.status(400).render('Admin/create-product', { 
+        error: 'All fields are required', 
+        name, description, price, category, stock, createdByEmail 
+      });
     }
 
     // Find the user by email
     const user = await userModel.findOne({ email: createdByEmail });
     if (!user) {
-      return res.status(400).send('User not found');
+      return res.status(400).render('Admin/create-product', { 
+        error: 'User not found', 
+        name, description, price, category, stock, createdByEmail 
+      });
     }
 
     // Process uploaded images
     if (!req.files || req.files.length === 0) {
-      return res.status(400).send('At least one image is required');
+      return res.status(400).render('Admin/create-product', { 
+        error: 'At least one image is required', 
+        name, description, price, category, stock, createdByEmail 
+      });
     }
     const images = req.files.map(file => ({
       data: file.buffer,
@@ -1170,12 +1174,29 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
     res.redirect('/Admin/products');
   } catch (error) {
     if (error instanceof multer.MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res.status(400).send('You can\'t upload more than 5 images. Only 5 are allowed.');
+      return res.status(400).render('Admin/create-product', { 
+        error: "You can't upload more than 5 images. Only 5 are allowed.", 
+        name: req.body.name, 
+        description: req.body.description, 
+        price: req.body.price, 
+        category: req.body.category, 
+        stock: req.body.stock, 
+        createdByEmail: req.body.createdByEmail 
+      });
     }
     console.error('Error creating product:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('Admin/create-product', { 
+      error: 'Internal Server Error', 
+      name: req.body.name, 
+      description: req.body.description, 
+      price: req.body.price, 
+      category: req.body.category, 
+      stock: req.body.stock, 
+      createdByEmail: req.body.createdByEmail 
+    });
   }
 });
+
 
 
 app.post('/Admin/create', async function(request, response) {
