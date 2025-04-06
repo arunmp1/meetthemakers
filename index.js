@@ -1655,7 +1655,7 @@ app.get('/Admin/orders/:id/mark-delivered',adminMiddleWare,async function(reques
   }
 })
 
-app.get('/Admin/product/create', adminMiddleWare, async function(request, response) {
+app.get('/admin/product/create', adminMiddleWare, async function(request, response) {
   try {
     const adminUser = await userModel.findById(request.user.uid);
     response.render('Admin/create-product', { 
