@@ -283,7 +283,7 @@ app.get('/post/:id', profileMiddleWare, async function(request, response) {
       Date: post.createdAt || new Date() // Ensure Date exists
     }));
     console.log('Posts with Images:', postWithImages);
-    response.render('userprofilepost', { post: postWithImages, user });
+    response.render('UserProfilePost', { post: postWithImages, user });
   } catch (error) {
     console.error('Error fetching posts:', error);
     response.status(500).send('Internal Server Error');
