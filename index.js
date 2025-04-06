@@ -1100,6 +1100,17 @@ app.post('/Admin/login', async function(request, response) {
   }
 });
 
+app.get('/Admin/products', adminMiddleWare, async function(request, response) {
+  try {
+    const products = await productModel.find().populate('createdBy', 'name');
+    const adminUser = await userModel.findById(request.user.uid);
+    response.render('./Admin/products', { products, adminUser });
+  } catch (error) {
+    console.error('Error Fetching Products:', error);
+    response.status(500).send('Internal Server Error');
+  }
+});
+
 app.get('/Admin/products/:id/delete', adminMiddleWare, async function(request, response) {
   try {
     const productId = request.params.id;
@@ -1127,7 +1138,7 @@ app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
   response.render('./Admin/create-product')
 })
 
-app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
+app.post('/Admin/products/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
     const { name, description, price, category, stock, createdByEmail } = req.body;
     const adminUser = await userModel.findById(req.user.uid);
@@ -1168,7 +1179,7 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
       createdBy: user._id
     });
 
-    res.redirect('/admin/products'); // Updated to lowercase
+    res.redirect('/Admin/products'); // Updated to lowercase
   } catch (error) {
     if (error instanceof multer.MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.status(400).render('Admin/create-product', { 
