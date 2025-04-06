@@ -114,7 +114,7 @@ const profileMiddleWare = authMiddleware({
 });
 
 const adminMiddleWare = authMiddleware({
-  redirectPath: '/admin/login', // Fixed to match your route
+  redirectPath: '/Admin/login', // Fixed to match your route
   adminMode: true
 });
 
@@ -834,7 +834,7 @@ app.post('/EditPost/update/:id', profileMiddleWare, async function(request, resp
   }
 });
 
-app.get('/admin', adminMiddleWare, async function(request, response) {
+app.get('/Admin', adminMiddleWare, async function(request, response) {
   try {
       const userCount = await userModel.countDocuments();
       const postCount = await postModel.countDocuments();
@@ -868,7 +868,7 @@ app.get('/admin', adminMiddleWare, async function(request, response) {
       response.status(500).send('Internal Server Error');
   }
 });
-app.get('/admin/users',adminMiddleWare,async function(request,response){
+app.get('/Admin/users',adminMiddleWare,async function(request,response){
   
   const users = await userModel.find().sort({_id:-1})
   const adminUser = await userModel.findById(request.user.uid);
@@ -876,7 +876,7 @@ app.get('/admin/users',adminMiddleWare,async function(request,response){
 });
 
 
-app.get('/admin/users/:id/delete',adminMiddleWare,async function(request,response){
+app.get('/Admin/users/:id/delete',adminMiddleWare,async function(request,response){
   const userId = request.params.id;
 
   await postModel.deleteMany({createdBy:userId})
@@ -895,19 +895,19 @@ app.get('/admin/users/:id/delete',adminMiddleWare,async function(request,respons
 
   await userModel.findByIdAndDelete(userId)
 
-  response.redirect('/admin/users')
+  response.redirect('/Admin/users')
   
 })
 
 
-app.get('/admin/posts',adminMiddleWare,async function(request,response){
+app.get('/Admin/posts',adminMiddleWare,async function(request,response){
   const posts = await postModel.find().sort({_id:-1}).populate('createdBy','name email')
   console.log(posts);
   const adminUser = await userModel.findById(request.user.uid);
     response.render(`./Admin/post`, { posts, adminUser });
 });
 
-app.get('/admin/post/:id/delete',adminMiddleWare,async function(request,response){
+app.get('/Admin/post/:id/delete',adminMiddleWare,async function(request,response){
   const postId = request.params.id;
   const post = await postModel.findById(postId)
 
@@ -930,19 +930,19 @@ app.get('/admin/post/:id/delete',adminMiddleWare,async function(request,response
   // 3. Delete the posts
   await postModel.findByIdAndDelete(postId)
 
-  response.redirect('/admin/posts')
+  response.redirect('/Admin/posts')
 
 })
 
 
-app.get('/admin/requirements',adminMiddleWare,async function(request,response){
+app.get('/Admin/requirements',adminMiddleWare,async function(request,response){
   const requirements = await requirementModel.find().sort({_id:-1}).populate('user','name email')
   const adminUser = await userModel.findById(request.user.uid);
-  response.render(`./admin/requirement`, { requirements, adminUser });
+  response.render(`./Admin/requirement`, { requirements, adminUser });
 });
 
 
-app.get('/admin/requirement/:id/delete',adminMiddleWare,async function (request,response) {
+app.get('/Admin/requirement/:id/delete',adminMiddleWare,async function (request,response) {
   const requirementID = request.params.id;
   const requirement = await requirementModel.findById(requirementID)  
 
@@ -956,18 +956,18 @@ app.get('/admin/requirement/:id/delete',adminMiddleWare,async function (request,
   )
 
   await requirementModel.findByIdAndDelete(requirementID)
-  response.redirect('/admin/requirements')
+  response.redirect('/Admin/requirements')
 
 })
 
 
-app.get('/admin/comments',adminMiddleWare,async function(request,response){
+app.get('/Admin/comments',adminMiddleWare,async function(request,response){
   const comments = await commentModel.find().sort({_id:-1}).populate('createdBy','name email')
   const adminUser = await userModel.findById(request.user.uid);
-    response.render('./admin/comments', { comments, adminUser });
+    response.render('./Admin/comments', { comments, adminUser });
 });
 
-app.get('/admin/comments/:id/delete',adminMiddleWare,async function(request,response){
+app.get('/Admin/comments/:id/delete',adminMiddleWare,async function(request,response){
   const commentId = request.params.id;
   const comment = await commentModel.findById(commentId)
 
@@ -981,17 +981,17 @@ app.get('/admin/comments/:id/delete',adminMiddleWare,async function(request,resp
 
   await commentModel.findByIdAndDelete(commentId);
 
-  response.redirect('/admin/comments');
+  response.redirect('/Admin/comments');
 })
 
-app.get('/admin/contacts',adminMiddleWare,async function(request,response){
+app.get('/Admin/contacts',adminMiddleWare,async function(request,response){
   const contacts = await contactModel.find().sort({_id:-1})
   const adminUser = await userModel.findById(request.user.uid);
-  response.render('./admin/contact', { contacts, adminUser });
+  response.render('./Admin/contact', { contacts, adminUser });
 });
 
 
-app.get('/admin/orders', adminMiddleWare, async function(request, response) {
+app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
   try {
       const { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount } = request.query;
       const filter = {};
@@ -1018,7 +1018,7 @@ app.get('/admin/orders', adminMiddleWare, async function(request, response) {
       const paidOrders = orders.filter(order => order.isPaid).length;
       const deliveredOrders = orders.filter(order => order.isDelivered).length;
       const adminUser = await userModel.findById(request.user.uid);
-      response.render('./admin/orders', {
+      response.render('./Admin/orders', {
           orders,
           stats: { totalOrders, totalAmount, paidOrders, deliveredOrders },
           filters: { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount },
@@ -1031,7 +1031,7 @@ app.get('/admin/orders', adminMiddleWare, async function(request, response) {
 });
 
 
-app.post('/admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
+app.post('/Admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
   try {
       const orderId = req.params.id;
       const order = await orderModel.findById(orderId);
@@ -1041,7 +1041,7 @@ app.post('/admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
       }
 
       await orderModel.deleteOne({ _id: orderId });
-      res.redirect('/admin/orders');
+      res.redirect('/Admin/orders');
   } catch (error) {
       console.error('Error deleting order:', error);
       res.status(500).send('Internal Server Error');
@@ -1049,13 +1049,13 @@ app.post('/admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
 });
 
 
-app.get('/admin/contacts/:id/delete',adminMiddleWare,async function(request,response){
+app.get('/Admin/contacts/:id/delete',adminMiddleWare,async function(request,response){
   await contactModel.findByIdAndDelete(request.params.id)
-  response.redirect('/admin/contacts')
+  response.redirect('/Admin/contacts')
 })
 
 // Admin Login Route
-app.post('/admin/login', async function(request, response) {
+app.post('/Admin/login', async function(request, response) {
   try {
       let { email, password } = request.body;
       
@@ -1083,7 +1083,7 @@ app.post('/admin/login', async function(request, response) {
       if (isPasswordValid) {
           let token = jwt.sign({ email: admin.email, uid: admin._id }, JWT_SECRET_ADMIN, { expiresIn: '24h' });
           response.cookie("token", token);
-          return response.redirect('/admin');
+          return response.redirect('/Admin');
       } else {
           return response.status(401).json({
               success: false,
@@ -1100,7 +1100,7 @@ app.post('/admin/login', async function(request, response) {
   }
 });
 
-app.get('/admin/products/:id/delete', adminMiddleWare, async function(request, response) {
+app.get('/Admin/products/:id/delete', adminMiddleWare, async function(request, response) {
   try {
     const productId = request.params.id;
     
@@ -1114,7 +1114,7 @@ app.get('/admin/products/:id/delete', adminMiddleWare, async function(request, r
     );
     
     // Optionally, log how many carts were affected
-    response.redirect('/admin/products');
+    response.redirect('/Admin/products');
   } catch (error) {
     console.error("Error deleting product:", error);
     response.status(500).send("Error deleting product");
@@ -1122,12 +1122,12 @@ app.get('/admin/products/:id/delete', adminMiddleWare, async function(request, r
 });
 
 
-app.get('/admin/createproduct',adminMiddleWare,async function(request,response){
+app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
   console.log(request.user)
   response.render('./Admin/create-product')
 })
 
-app.post('/admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
+app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
       const { name, description, price, category, stock, createdByEmail } = req.body;
 
@@ -1162,7 +1162,7 @@ app.post('/admin/product/create', adminMiddleWare, upload.array('images', 5), as
           createdBy: user._id
       });
 
-      res.redirect('/admin/products');
+      res.redirect('/Admin/products');
   } catch (error) {
       console.error('Error creating product:', error);
       res.status(500).send('Internal Server Error');
@@ -1170,7 +1170,7 @@ app.post('/admin/product/create', adminMiddleWare, upload.array('images', 5), as
 });
 
 
-app.post('/admin/create', async function(request, response) {
+app.post('/Admin/create', async function(request, response) {
   try {
     // You might want to add authorization middleware to ensure only superadmins can create admins
     
@@ -1217,7 +1217,7 @@ app.post('/admin/create', async function(request, response) {
 });
 
 
-app.get('/admin/login',async function(request,response){
+app.get('/Admin/login',async function(request,response){
   response.render('./Admin/AdminLogin')
 })
 
@@ -1606,7 +1606,7 @@ app.post('/products/:id/review',profileMiddleWare,async function(request,respons
 })
 
 
-app.get('/admin/orders/:id/mark-delivered',adminMiddleWare,async function(request,response){
+app.get('/Admin/orders/:id/mark-delivered',adminMiddleWare,async function(request,response){
   try{
     const order = await orderModel.findById(request.params.id)
     
@@ -1620,14 +1620,14 @@ app.get('/admin/orders/:id/mark-delivered',adminMiddleWare,async function(reques
 
     await order.save();
 
-    response.redirect(`/admin/orders/${order._id}`)
+    response.redirect(`/Admin/orders/${order._id}`)
   }catch(error){
     console.error('Error marking order as delivered:',error);
     res.status(500).send('Server error occurred while updating delivery status');
   }
 })
 
-app.get('/admin/products', adminMiddleWare, async function(request, response) {
+app.get('/Admin/products', adminMiddleWare, async function(request, response) {
   try {
       const products = await productModel.find().populate('createdBy', 'name');
       const adminUser = await userModel.findById(request.user.uid);
@@ -1658,7 +1658,7 @@ app.get('/admin/products', adminMiddleWare, async function(request, response) {
 
 // function adminMiddleWare(request,response,next){
 //   if(!request.cookies.token){
-//     return response.redirect('/adminLogin')
+//     return response.redirect('/AdminLogin')
 //   }
 //   try{
 //     let data = jwt.verify(request.cookies.token,"ASAFWR@$!@!$!#")
@@ -1667,7 +1667,7 @@ app.get('/admin/products', adminMiddleWare, async function(request, response) {
 //   }catch(error){
 //     console.error("Invalud Token ",error)
 //     response.cookie("token","");
-//     response.redirect('/adminLogin')
+//     response.redirect('/AdminLogin')
 //   }
 // }
 
