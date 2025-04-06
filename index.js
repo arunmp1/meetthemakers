@@ -1567,25 +1567,21 @@ app.get('/orders/:id',profileMiddleWare,async function(request,response){
 })
 
 
-app.get('/ordersList',profileMiddleWare,async function(request,response){
-  try{
+app.get('/ordersList', profileMiddleWare, async function(request, response) {
+  try {
     const userId = request.user.uid;
-
-    const orders = await orderModel.find({user:userId})
-    .populate('user','user email')
-    .populate('orderItems.product','name')
-    .sort('-createAt')
-
-
-    response.render('./Ecommerce/orderList',{
-      orders:orders,
-      user:request.user
-    })
-  }catch(error){
-    console.error('Error',error)
-    response.status(404).send('Internal Server Error')
+    const orders = await orderModel.find({ user: userId })
+      .populate('user', 'user email')
+      .populate('orderItems.product', 'name');
+    response.render('./Ecommerce/orderList', {
+      orders: orders,
+      user: request.user
+    });
+  } catch (error) {
+    console.error('Error', error);
+    response.status(500).send('Internal Server Error');
   }
-})
+});
 
 
 app.post('/products/:id/review',profileMiddleWare,async function(request,response){
