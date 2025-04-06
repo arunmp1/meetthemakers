@@ -145,7 +145,7 @@
     <div class="container">
         <h1 class="form-title">Create New Product</h1>
         <form class="product-form" action="/Admin/product/create" method="POST" enctype="multipart/form-data" id="productForm">
-            <% if (error) { %>
+            <% if (typeof error !== 'undefined' && error) { %>
                 <div class="error-message"><%= error %></div>
             <% } %>
             <div class="form-group">
