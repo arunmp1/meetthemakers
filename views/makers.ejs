@@ -75,7 +75,7 @@
                     <% } %>
                     <div class="content">
                         <h2><%= element.title %></h2>
-                        <p class="date"><strong>Date:</strong> <%= element.Date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                        <p class="date"><strong>Date:</strong> <%= element.date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
                         <p class="author"><strong>Author:</strong> <%= element.createdBy.name %></p>
                         <p><strong>Likes:</strong> <%= element.likes.length %></p>
                         <a href="/ImageRead/<%= element._id %>">Read More</a>
