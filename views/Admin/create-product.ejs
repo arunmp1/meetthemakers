@@ -66,8 +66,7 @@
         }
         .preview-item {
             width: 100px;
-            height: 
-            100px;
+            height: 100px;
             border-radius: 5px;
             overflow: hidden;
             position: relative;
@@ -76,6 +75,22 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
         }
         .submit-btn {
             display: block;
@@ -123,52 +138,56 @@
             font-size: 0.9rem;
             color: var(--text-light);
         }
+        .error-message { color: var(--accent-color); margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="form-title">Create New Product</h1>
-        <form class="product-form" action="/admin/product/create" method="POST" enctype="multipart/form-data">
+        <form class="product-form" action="/Admin/product/create" method="POST" enctype="multipart/form-data" id="productForm">
+            <% if (error) { %>
+                <div class="error-message"><%= error %></div>
+            <% } %>
             <div class="form-group">
                 <label for="name" class="form-label">Product Name</label>
-                <input type="text" id="name" name="name" class="form-control" placeholder="Enter product name" required>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Enter product name" value="<%= name || '' %>" required>
             </div>
             <div class="form-group">
                 <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" class="form-control" placeholder="Enter product description" required></textarea>
+                <textarea id="description" name="description" class="form-control" placeholder="Enter product description" required><%= description || '' %></textarea>
             </div>
             <div class="form-group">
                 <label for="price" class="form-label">Price (₹)</label>
-                <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" placeholder="Enter price" required>
+                <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" placeholder="Enter price" value="<%= price || '' %>" required>
             </div>
             <div class="form-group">
                 <label for="category" class="form-label">Category</label>
                 <select id="category" name="category" class="form-control" required>
                     <option value="">Select a category</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="clothing">Clothing</option>
-                    <option value="home">Home & Kitchen</option>
-                    <option value="books">Books</option>
-                    <option value="toys">Toys</option>
-                    <option value="beauty">Beauty</option>
-                    <option value="sports">Sports</option>
-                    <option value="food">Food & Beverages</option>
+                    <option value="electronics" <%= category === 'electronics' ? 'selected' : '' %>>Electronics</option>
+                    <option value="clothing" <%= category === 'clothing' ? 'selected' : '' %>>Clothing</option>
+                    <option value="home" <%= category === 'home' ? 'selected' : '' %>>Home & Kitchen</option>
+                    <option value="books" <%= category === 'books' ? 'selected' : '' %>>Books</option>
+                    <option value="toys" <%= category === 'toys' ? 'selected' : '' %>>Toys</option>
+                    <option value="beauty" <%= category === 'beauty' ? 'selected' : '' %>>Beauty</option>
+                    <option value="sports" <%= category === 'sports' ? 'selected' : '' %>>Sports</option>
+                    <option value="food" <%= category === 'food' ? 'selected' : '' %>>Food & Beverages</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="stock" class="form-label">Stock Quantity</label>
-                <input type="number" id="stock" name="stock" class="form-control" min="0" placeholder="Enter stock quantity" required>
+                <input type="number" id="stock" name="stock" class="form-control" min="0" placeholder="Enter stock quantity" value="<%= stock || '' %>" required>
             </div>
             <div class="form-group">
                 <label for="createdByEmail" class="form-label">Created By (User Email)</label>
-                <input type="email" id="createdByEmail" name="createdByEmail" class="form-control" placeholder="Enter creator's email" required>
+                <input type="email" id="createdByEmail" name="createdByEmail" class="form-control" placeholder="Enter creator's email" value="<%= createdByEmail || '' %>" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Product Images</label>
                 <div class="file-upload">
                     <label for="images" class="upload-label">Choose Images</label>
                     <input type="file" id="images" name="images" multiple accept="image/*" onchange="previewImages(this)" required>
-                    <div class="file-info">You can select up to 5 images (max 5MB each)</div>
+                    <div class="file-info" id="fileInfo">You can select up to 5 images (max 5MB each)</div>
                 </div>
                 <div class="image-preview" id="imagePreview"></div>
             </div>
@@ -177,32 +196,56 @@
     </div>
 
     <script>
+        let selectedFiles = [];
+
         function previewImages(input) {
             const preview = document.getElementById('imagePreview');
+            const fileInfo = document.getElementById('fileInfo');
             preview.innerHTML = '';
-            if (input.files) {
-                const maxFiles = 5;
-                const fileCount = Math.min(input.files.length, maxFiles);
-                for (let i = 0; i < fileCount; i++) {
-                    const file = input.files[i];
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const div = document.createElement('div');
-                        div.className = 'preview-item';
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        div.appendChild(img);
-                        preview.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
-                }
-                if (input.files.length > maxFiles) {
-                    const infoText = document.querySelector('.file-info');
-                    infoText.textContent = `Only the first ${maxFiles} images will be uploaded. You selected ${input.files.length}.`;
-                    infoText.style.color = '#ff6600';
-                }
+            selectedFiles = Array.from(input.files);
+
+            if (selectedFiles.length > 5) {
+                fileInfo.textContent = "You can't upload more than 5 images. Only 5 are allowed.";
+                fileInfo.style.color = 'var(--accent-color)';
+                input.value = ''; // Clear the input
+                selectedFiles = [];
+                return;
+            } else {
+                fileInfo.textContent = `Selected ${selectedFiles.length} image(s). You can select up to 5 images (max 5MB each).`;
+                fileInfo.style.color = 'var(--text-light)';
             }
+
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button class="delete-btn" data-index="${index}" onclick="deleteImage(${index})">×</button>
+                    `;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
         }
+
+        function deleteImage(index) {
+            selectedFiles.splice(index, 1);
+            const input = document.getElementById('images');
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            input.files = dataTransfer.files;
+            previewImages(input); // Re-render preview
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            if (selectedFiles.length > 5) {
+                e.preventDefault();
+                document.getElementById('fileInfo').textContent = "You can't upload more than 5 images. Only 5 are allowed.";
+                document.getElementById('fileInfo').style.color = 'var(--accent-color)';
+            }
+        });
     </script>
 </body>
 </html>
