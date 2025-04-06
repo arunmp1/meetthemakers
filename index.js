@@ -1314,7 +1314,7 @@ app.get('/cart', profileMiddleWare, async function(request, response) {
       user: request.user.uid
     }).populate('cartItems.products');
     const user = await userModel.findById(request.user.uid);
-    response.render('./Ecommerce/cart', { cart, user }); // Changed 'carts' to 'cart'
+    response.render('./Ecommerce/carts', { cart, user }); // Changed 'carts' to 'cart'
   } catch (error) {
     console.error('Error fetching cart:', error);
     response.status(500).send('Internal Server Error');
