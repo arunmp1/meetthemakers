@@ -1127,7 +1127,7 @@ app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
   response.render('./Admin/create-product')
 })
 
-app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
+app.post('/admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
     const { name, description, price, category, stock, createdByEmail } = req.body;
     const adminUser = await userModel.findById(req.user.uid);
@@ -1168,7 +1168,7 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
       createdBy: user._id
     });
 
-    res.redirect('/Admin/products');
+    res.redirect('/admin/products'); // Updated to lowercase
   } catch (error) {
     if (error instanceof multer.MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.status(400).render('Admin/create-product', { 
@@ -1179,7 +1179,7 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
         category: req.body.category, 
         stock: req.body.stock, 
         createdByEmail: req.body.createdByEmail, 
-        adminUser: await userModel.findById(req.user.uid) 
+        adminUser 
       });
     }
     console.error('Error creating product:', error);
@@ -1191,7 +1191,7 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
       category: req.body.category, 
       stock: req.body.stock, 
       createdByEmail: req.body.createdByEmail, 
-      adminUser: await userModel.findById(req.user.uid) 
+      adminUser 
     });
   }
 });
