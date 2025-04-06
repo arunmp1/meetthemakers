@@ -404,9 +404,13 @@ app.get('/logout', function(request, response) {
 
 app.get('/discovers', isLoggedIn, async function(request, response) {
   try {
-    let requirement = await requirementModel.find({}, 'heading content price quantity').populate('user', 'name').limit(10);
-    if (!request.user) response.render('marketPlace', { requirement });
-    else {
+    // Include 'likes' in the selected fields
+    let requirement = await requirementModel.find({}, 'heading content price quantity likes')
+      .populate('user', 'name')
+      .limit(10);
+    if (!request.user) {
+      response.render('marketPlace', { requirement });
+    } else {
       let user = await userModel.findOne({ _id: request.user.uid }, 'name email');
       response.render('marketPlace', { user, requirement });
     }
