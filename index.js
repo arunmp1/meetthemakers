@@ -45,15 +45,16 @@ async function connectToDatabase() {
     console.log('Using cached MongoDB connection');
     return cachedConnection;
   }
+
   try {
     console.log('Establishing new MongoDB connection...', mongoURI.replace(/:([^:@]+)@/, ':****@'));
     cachedConnection = await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 5000, // 5s timeout
+      socketTimeoutMS: 10000, // 10s socket timeout
       ssl: true,
-      directConnection: true
+      directConnection: true // No replica set for Cosmos DB
     });
     console.log('✅ MongoDB connected successfully');
     return cachedConnection;
