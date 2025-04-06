@@ -641,32 +641,28 @@ app.post('/requirement', isLoggedIn, upload.single('coverImage'), async (req, re
   }
 });
 
-app.get('/creation', async function(request, response) {
+app.get('/creation', isLoggedIn, async function(request, response) {
   try {
-    // Fetch all posts from postModel, populate createdBy
+    console.log('Entering /creation route');
     const posts = await postModel.find({}).populate('createdBy', 'name');
-
-    // Convert cover images to base64 for rendering
+    console.log('Posts fetched:', posts.length);
     const postsWithImages = posts.map(post => ({
       ...post._doc,
       coverImageBase64: post.coverImage && post.coverImage.data && post.coverImage.contentType
         ? `data:${post.coverImage.contentType};base64,${post.coverImage.data.toString('base64')}`
         : null
     }));
-
-    // Get user if authenticated
     let user = null;
     if (request.user && request.user.email) {
       user = await userModel.findOne({ email: request.user.email });
-      console.log('Authenticated User:', user);
+      console.log('Authenticated User:', user ? user.name : 'No user found');
     } else {
       console.log('No authenticated user');
     }
-
-    console.log('Posts with Images:', postsWithImages);
+    console.log('Rendering makers.ejs with posts:', postsWithImages.length);
     response.render('makers', { user, post: postsWithImages });
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching posts in /creation:', error);
     response.status(500).send('Internal Server Error');
   }
 });
