@@ -1127,7 +1127,7 @@ app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
   response.render('./Admin/create-product')
 })
 
-app.post('/admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
+app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
     const { name, description, price, category, stock, createdByEmail } = req.body;
     const adminUser = await userModel.findById(req.user.uid);
