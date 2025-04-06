@@ -1129,43 +1129,51 @@ app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
 
 app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
-      const { name, description, price, category, stock, createdByEmail } = req.body;
+    const { name, description, price, category, stock, createdByEmail } = req.body;
 
-      // Validate required fields
-      if (!name || !price || !category || !stock || !createdByEmail) {
-          return res.status(400).send('All fields are required');
-      }
+    // Validate required fields
+    if (!name || !price || !category || !stock || !createdByEmail) {
+      return res.status(400).send('All fields are required');
+    }
 
-      // Find the user by email
-      const user = await userModel.findOne({ email: createdByEmail });
-      if (!user) {
-          return res.status(400).send('User not found');
-      }
+    // Check file count (Multer limits to 5, but explicit check for clarity)
+    if (req.files.length > 5) {
+      return res.status(400).send('You can\'t upload more than 5 images. Only 5 are allowed.');
+    }
 
-      // Process uploaded images
-      if (!req.files || req.files.length === 0) {
-          return res.status(400).send('At least one image is required');
-      }
-      const images = req.files.map(file => ({
-          data: file.buffer,
-          contentType: file.mimetype
-      }));
+    // Find the user by email
+    const user = await userModel.findOne({ email: createdByEmail });
+    if (!user) {
+      return res.status(400).send('User not found');
+    }
 
-      // Create the product
-      const product = await productModel.create({
-          name,
-          description,
-          price: parseFloat(price),
-          category,
-          stock: parseInt(stock),
-          images,
-          createdBy: user._id
-      });
+    // Process uploaded images
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).send('At least one image is required');
+    }
+    const images = req.files.map(file => ({
+      data: file.buffer,
+      contentType: file.mimetype
+    }));
 
-      res.redirect('/Admin/products');
+    // Create the product
+    const product = await productModel.create({
+      name,
+      description,
+      price: parseFloat(price),
+      category,
+      stock: parseInt(stock),
+      images,
+      createdBy: user._id
+    });
+
+    res.redirect('/Admin/products');
   } catch (error) {
-      console.error('Error creating product:', error);
-      res.status(500).send('Internal Server Error');
+    if (error instanceof multer.MulterError && error.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).send('You can\'t upload more than 5 images. Only 5 are allowed.');
+    }
+    console.error('Error creating product:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
