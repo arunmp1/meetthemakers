@@ -201,7 +201,8 @@ app.get('/post/:id', profileMiddleWare, async function(request, response) {
 app.get('/profile/requirements', profileMiddleWare, async function(request, response) {
   try {
     const user = await userModel.findOne({ _id: request.user.uid }, 'name email');
-    const userRequirements = await requirementModel.find({ user: user._id }, 'heading content price quantity');
+    // Include 'likes' in the selected fields
+    const userRequirements = await requirementModel.find({ user: user._id }, 'heading content price quantity likes');
     response.render('UserProfileRequirement', { user, post: userRequirements });
   } catch (error) {
     console.error('Error fetching user requirements:', error);
