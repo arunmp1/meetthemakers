@@ -459,21 +459,27 @@ app.get('/creation', isLoggedIn, async function(request, response) {
   }
 });
 
-app.post('/creation', isLoggedIn, upload.single('coverImage'), async function(request, response) {
+app.get('/creation', isLoggedIn, async function(request, response) {
   try {
-    let who = await userModel.findOne({ email: request.user.email }, '_id post');
-    if (!who) return response.status(404).send('User not found');
-    let { title, body } = request.body;
-    if (!request.file) return response.status(400).send('Cover image is required');
-    const coverImage = { data: request.file.buffer, contentType: request.file.mimetype };
-    const post = await withRetry(async () => {
-      const newPost = await postModel.create({ createdBy: who._id, title, body, coverImage });
-      await userModel.updateOne({ _id: who._id }, { $push: { post: newPost._id } });
-      return newPost;
-    });
-    response.redirect('/creation');
+    console.log('Entering /creation route');
+    const posts = await postModel.find({}, 'title body coverImage createdAt likes').populate('createdBy', 'name').limit(10);
+    console.log('Posts fetched:', posts.length);
+    const postsWithImages = posts.map(post => ({
+      ...post._doc,
+      date: post.createdAt, // Map createdAt to date for the template
+      coverImageBase64: post.coverImage?.data
+        ? `data:${post.coverImage.contentType};base64,${post.coverImage.data.toString('base64')}`
+        : null
+    }));
+    let user = null;
+    if (request.user?.email) {
+      user = await userModel.findOne({ email: request.user.email }, 'name email');
+      console.log('Authenticated User:', user?.name || 'No user found');
+    }
+    console.log('Rendering makers.ejs with posts:', postsWithImages.length);
+    response.render('makers', { user, post: postsWithImages });
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error('Error fetching posts in /creation:', error);
     response.status(500).send('Internal Server Error');
   }
 });
