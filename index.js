@@ -768,7 +768,7 @@ app.get('/EditRequirement/:id', profileMiddleWare, async function(request, respo
       console.log(`No requirement found for ID: ${request.params.id}`);
       return response.status(404).send('Requirement not found');
     }
-    response.render('edit', { post: requirement, user }); // 'edit.ejs' for requirements
+    response.render('Edit', { post: requirement, user }); // 'edit.ejs' for requirements
   } catch (error) {
     console.error('Error fetching requirement for edit:', error);
     response.status(500).send('Internal Server Error');
@@ -806,7 +806,7 @@ app.get('/EditPost/:id', profileMiddleWare, async function(request, response) {
       console.log(`No post found for ID: ${request.params.id}`);
       return response.status(404).send('Post not found');
     }
-    response.render('editphoto', { post, user });
+    response.render('EditPhoto', { post, user });
   } catch (error) {
     console.error('Error fetching post for edit:', error);
     response.status(500).send('Internal Server Error');
