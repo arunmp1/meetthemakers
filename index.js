@@ -1308,18 +1308,18 @@ app.get('/product/:id', profileMiddleWare, async function(request, response) {
   }
 });
 
-app.get('/cart',profileMiddleWare,async function(request,response){
-  try{
+app.get('/cart', profileMiddleWare, async function(request, response) {
+  try {
     const cart = await cartModel.findOne({
-      user:request.user.uid
+      user: request.user.uid
     }).populate('cartItems.products');
-    const user = await userModel.findById(request.user.uid)
-    response.render('./Ecommerce/carts',{cart,user})
-  }catch(error){
-    console.error('Error',error)
-    response.status(500).send('Internal Server Error')
+    const user = await userModel.findById(request.user.uid);
+    response.render('./Ecommerce/cart', { cart, user }); // Changed 'carts' to 'cart'
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    response.status(500).send('Internal Server Error');
   }
-})
+});
 
 
 app.post('/cart/add/:productId',profileMiddleWare,async function(request,response){
