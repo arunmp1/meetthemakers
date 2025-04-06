@@ -298,7 +298,7 @@ app.get('/profile/requirements', profileMiddleWare, async function(request, resp
     console.log('User:', user);
     console.log('Requirements:', userRequirements);
     userRequirements.forEach(req => console.log(`Requirement ID: ${req._id}`));
-    response.render('userprofilerequirement', { user, post: userRequirements });
+    response.render('UserProfileRequirement', { user, post: userRequirements });
   } catch (error) {
     console.error('Error fetching user requirements:', error);
     response.status(500).send('Internal Server Error');
