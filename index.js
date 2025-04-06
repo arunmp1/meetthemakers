@@ -46,7 +46,40 @@ app.set("view engine","ejs")
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname,'public')))
 
+const mongoURI = process.env.COSMOSDB_CONNECTION_STRING;
+let cachedConnection = null;
 
+async function connectToDatabase() {
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    console.log('Using cached MongoDB connection');
+    return cachedConnection;
+  }
+
+  try {
+    console.log('Establishing new MongoDB connection...', mongoURI.replace(/:([^:@]+)@/, ':****@'));
+    cachedConnection = await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // 5s timeout
+      socketTimeoutMS: 10000, // 10s socket timeout
+      ssl: true,
+      directConnection: true // No replica set for Cosmos DB
+    });
+    console.log('✅ MongoDB connected successfully');
+    return cachedConnection;
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
+    throw error;
+  }
+}
+
+// Connect at startup
+connectToDatabase().catch(err => console.error('Initial connection failed:', err));
+
+app.use(async (req, res, next) => {
+  await connectToDatabase();
+  next();
+});
 
 function authMiddleware(options = {}) {
   const {
@@ -510,46 +543,48 @@ app.post('/signup', async function(request, response) {
 });
 
 app.post('/login', async function(request, response) {
+  console.time('Login Total');
   try {
-      let { email, password } = request.body;
-      
-      // Use case-insensitive regex to find the user
-      let user = await userModel.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
-      
-      if (!user) {
-          return response.status(401).json({
-              status: 'error',
-              message: 'Either Email-Id or Password is Incorrect'
-          });
-      }
+    const { email, password } = request.body;
 
-      bcrypt.compare(password, user.password, function(error, result) {
-          if (error) {
-              return response.status(500).json({
-                  status: 'error',
-                  message: 'Authentication error'
-              });
-          }
-          if (result) {
-              let token = jwt.sign({ email: user.email, uid: user._id }, secretKey); // Use stored email
-              response.cookie("token", token);
-              return response.status(200).json({
-                  status: 'success',
-                  message: 'Login Successful'
-              });
-          } else {
-              return response.status(401).json({
-                  status: 'error',
-                  message: 'Either Email-Id or Password is Incorrect'
-              });
-          }
+    console.time('Login Query');
+    const user = await userModel.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    console.timeEnd('Login Query');
+
+    if (!user) {
+      console.timeEnd('Login Total');
+      return response.status(401).json({
+        status: 'error',
+        message: 'Either Email-Id or Password is Incorrect'
       });
+    }
+
+    console.time('Password Compare');
+    const result = await bcrypt.compare(password, user.password); // Use async version
+    console.timeEnd('Password Compare');
+
+    if (!result) {
+      console.timeEnd('Login Total');
+      return response.status(401).json({
+        status: 'error',
+        message: 'Either Email-Id or Password is Incorrect'
+      });
+    }
+
+    const token = jwt.sign({ email: user.email, uid: user._id }, secretKey);
+    response.cookie("token", token);
+    console.timeEnd('Login Total');
+    return response.status(200).json({
+      status: 'success',
+      message: 'Login Successful'
+    });
   } catch (error) {
-      console.error("Login error:", error);
-      response.status(500).json({
-          status: 'error',
-          message: 'Internal Server Error'
-      });
+    console.error("Login error:", error);
+    console.timeEnd('Login Total');
+    response.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error'
+    });
   }
 });
       
@@ -1639,16 +1674,6 @@ app.get('/admin/products', adminMiddleWare, async function(request, response) {
 //     response.redirect('/adminLogin')
 //   }
 // }
-
-
-const mongoURI = process.env.COSMOSDB_CONNECTION_STRING;
-
-mongoose.connect(mongoURI, { 
-  ssl: true,
-  replicaSet: 'globaldb'})
-
-.then(() => console.log('✅ MongoDB connected successfully'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
 
 
 app.use(express.static('public'));
