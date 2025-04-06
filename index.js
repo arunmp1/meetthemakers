@@ -1644,20 +1644,12 @@ app.get('/admin/products', adminMiddleWare, async function(request, response) {
 const mongoURI = process.env.COSMOSDB_CONNECTION_STRING;
 
 mongoose.connect(mongoURI, { 
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-    ssl: true,
-    replicaSet: 'globaldb', 
-    serverSelectionTimeoutMS: 30000,  // Time to wait before throwing error
-    socketTimeoutMS: 45000,         // Keep sockets open for 45 seconds
-    connectTimeoutMS: 10000  
-  }
-  })
+  ssl: true,
+  replicaSet: 'globaldb'})
 
 .then(() => console.log('✅ MongoDB connected successfully'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
+
 
 app.use(express.static('public'));
 const PORT = process.env.PORT || 3000;
