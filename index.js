@@ -1130,29 +1130,27 @@ app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
 app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
     const { name, description, price, category, stock, createdByEmail } = req.body;
+    const adminUser = await userModel.findById(req.user.uid);
 
-    // Validate required fields
     if (!name || !price || !category || !stock || !createdByEmail) {
       return res.status(400).render('Admin/create-product', { 
         error: 'All fields are required', 
-        name, description, price, category, stock, createdByEmail 
+        name, description, price, category, stock, createdByEmail, adminUser 
       });
     }
 
-    // Find the user by email
     const user = await userModel.findOne({ email: createdByEmail });
     if (!user) {
       return res.status(400).render('Admin/create-product', { 
         error: 'User not found', 
-        name, description, price, category, stock, createdByEmail 
+        name, description, price, category, stock, createdByEmail, adminUser 
       });
     }
 
-    // Process uploaded images
     if (!req.files || req.files.length === 0) {
       return res.status(400).render('Admin/create-product', { 
         error: 'At least one image is required', 
-        name, description, price, category, stock, createdByEmail 
+        name, description, price, category, stock, createdByEmail, adminUser 
       });
     }
     const images = req.files.map(file => ({
@@ -1160,7 +1158,6 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
       contentType: file.mimetype
     }));
 
-    // Create the product
     const product = await productModel.create({
       name,
       description,
@@ -1181,7 +1178,8 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
         price: req.body.price, 
         category: req.body.category, 
         stock: req.body.stock, 
-        createdByEmail: req.body.createdByEmail 
+        createdByEmail: req.body.createdByEmail, 
+        adminUser: await userModel.findById(req.user.uid) 
       });
     }
     console.error('Error creating product:', error);
@@ -1192,7 +1190,8 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
       price: req.body.price, 
       category: req.body.category, 
       stock: req.body.stock, 
-      createdByEmail: req.body.createdByEmail 
+      createdByEmail: req.body.createdByEmail, 
+      adminUser: await userModel.findById(req.user.uid) 
     });
   }
 });
@@ -1656,17 +1655,24 @@ app.get('/Admin/orders/:id/mark-delivered',adminMiddleWare,async function(reques
   }
 })
 
-app.get('/Admin/products', adminMiddleWare, async function(request, response) {
+app.get('/Admin/product/create', adminMiddleWare, async function(request, response) {
   try {
-      const products = await productModel.find().populate('createdBy', 'name');
-      const adminUser = await userModel.findById(request.user.uid);
-      response.render('./Admin/products', { products, adminUser });
+    const adminUser = await userModel.findById(request.user.uid);
+    response.render('Admin/create-product', { 
+      error: null, 
+      name: '', 
+      description: '', 
+      price: '', 
+      category: '', 
+      stock: '', 
+      createdByEmail: '', 
+      adminUser 
+    });
   } catch (error) {
-      console.error('Error Fetching Products', error);
-      response.status(500).send('Internal Server Error');
+    console.error('Error rendering create product form:', error);
+    response.status(500).send('Internal Server Error');
   }
 });
-
 
 // MiddleWare
 
