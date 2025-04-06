@@ -1138,7 +1138,7 @@ app.get('/Admin/createproduct',adminMiddleWare,async function(request,response){
   response.render('./Admin/create-product')
 })
 
-app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
+app.post('/Admin/products/create', adminMiddleWare, upload.array('images', 5), async (req, res) => {
   try {
     const { name, description, price, category, stock, createdByEmail } = req.body;
     const adminUser = await userModel.findById(req.user.uid);
@@ -1662,7 +1662,7 @@ app.get('/Admin/orders/:id/mark-delivered',adminMiddleWare,async function(reques
   }
 })
 
-app.get('/Admin/products/create', adminMiddleWare, async function(request, response) {
+app.get('/Admin/product/create', adminMiddleWare, async function(request, response) {
   try {
     const adminUser = await userModel.findById(request.user.uid);
     response.render('Admin/create-product', { 
