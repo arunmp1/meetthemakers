@@ -193,7 +193,7 @@
                     <div class="btn-group">
                       <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-primary">View</a>
                       <% if (!order.isDelivered) { %>
-                        <a href="/admin/orders/<%= order._id %>/mark-delivered" 
+                        <a href="/Admin/orders/<%= order._id %>/mark-delivered" 
                            class="btn btn-sm btn-outline-success"
                            onclick="return confirm('Mark this order as delivered?')">
                           Mark Delivered
