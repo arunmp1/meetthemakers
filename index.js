@@ -1339,13 +1339,16 @@ app.get('/product/:id', profileMiddleWare, async function(request, response) {
 
 app.get('/cart', profileMiddleWare, async function(request, response) {
   try {
-    const cart = await cartModel.findOne({
-      user: request.user.uid
-    }).populate('cartItems.products');
+    const cart = await cartModel.findOne({ user: request.user.uid }).populate('cartItems.products');
     const user = await userModel.findById(request.user.uid);
-    response.render('./Ecommerce/carts', { cart, user }); // Changed 'carts' to 'cart'
+    console.log('Cart fetched:', cart ? cart._id : 'No cart found');
+    response.render('./Ecommerce/carts', { cart, user });
   } catch (error) {
-    console.error('Error fetching cart:', error);
+    console.error('Error fetching cart:', {
+      message: error.message,
+      stack: error.stack,
+      userId: request.user.uid
+    });
     response.status(500).send('Internal Server Error');
   }
 });
