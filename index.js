@@ -1117,24 +1117,20 @@ app.get('/Admin/products', adminMiddleWare, async function(request, response) {
   }
 });
 
-app.get('/Admin/products/:id/delete', adminMiddleWare, async function(request, response) {
+app.post('/admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
   try {
-    const productId = request.params.id;
-    
-    // First, delete the product
-    await productModel.findByIdAndDelete(productId);
-    
-    // Then, find all carts containing this product and remove it from them
-    await cartModel.updateMany(
-      { "cartItems.products": productId }, 
-      { $pull: { cartItems: { products: productId } } }
-    );
-    
-    // Optionally, log how many carts were affected
-    response.redirect('/Admin/products');
+      const orderId = req.params.id;
+      const order = await orderModel.findById(orderId);
+      
+      if (!order) {
+          return res.status(404).send('Order not found');
+      }
+
+      await orderModel.deleteOne({ _id: orderId });
+      res.redirect('/Admin/orders');
   } catch (error) {
-    console.error("Error deleting product:", error);
-    response.status(500).send("Error deleting product");
+      console.error('Error deleting order:', error);
+      res.status(500).send('Internal Server Error');
   }
 });
 
