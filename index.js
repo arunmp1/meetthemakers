@@ -1030,47 +1030,12 @@ app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
   }
 });
 
-app.get('/Admin/orders/:id', adminMiddleWare, async function(request, response) {
-  try {
-    const orderId = request.params.id;
-    console.log(`Fetching order with ID: ${orderId}`);
+app.get('/admin/orders/:id',adminMiddleWare,async function(request,response){
+  const order = await orderModel.findById(request.params.id)
+  const user = await userModel.findById(order.user)
 
-    // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
-      console.log(`Invalid ObjectId: ${orderId}`);
-      return response.status(400).send('Invalid order ID');
-    }
-
-    const order = await orderModel.findById(orderId)
-      .populate('user', 'name email phone')
-      .populate('orderItems.product', 'name price images');
-    
-    if (!order) {
-      console.log(`Order not found: ${orderId}`);
-      return response.status(404).send('Order not found');
-    }
-
-    const adminUser = await userModel.findById(request.user.uid);
-    if (!adminUser) {
-      console.log(`Admin user not found: ${request.user.uid}`);
-      return response.status(404).send('Admin user not found');
-    }
-
-    console.log('Order data:', JSON.stringify(order, null, 2));
-    console.log('Admin user:', JSON.stringify(adminUser, null, 2));
-    console.log('Rendering template from:', path.join(__dirname, 'views/Admin/order-details.ejs'));
-
-    response.render('./Admin/order-details', { order, adminUser });
-  } catch (error) {
-    console.error('Error fetching order details:', {
-      message: error.message,
-      stack: error.stack,
-      orderId: request.params.id,
-      userId: request.user.uid
-    });
-    response.status(500).send('Internal Server Error: ' + error.message);
-  }
-});
+  response.render('./admin/order-details',{order,user})
+})
 
 app.post('/Admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
   try {
