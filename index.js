@@ -1030,6 +1030,32 @@ app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
   }
 });
 
+app.get('/Admin/orders/:id', adminMiddleWare, async function(request, response) {
+  try {
+    const orderId = request.params.id;
+    console.log('Fetching order details:', orderId);
+
+    const order = await orderModel.findById(orderId)
+      .populate('user', 'name email')
+      .populate('orderItems.product', 'name price');
+    if (!order) {
+      console.log('Order not found:', orderId);
+      return response.status(404).send('Order not found');
+    }
+
+    const adminUser = await userModel.findById(request.user.uid);
+    console.log('Order details fetched:', orderId);
+
+    response.render('./Admin/order-details', { order, adminUser });
+  } catch (error) {
+    console.error('Error fetching order details:', {
+      message: error.message,
+      stack: error.stack,
+      orderId: request.params.id
+    });
+    response.status(500).send('Internal Server Error');
+  }
+});
 
 app.post('/Admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
   try {
