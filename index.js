@@ -1035,9 +1035,8 @@ app.get('/Admin/orders/:id', adminMiddleWare, async function(request, response) 
     const orderId = request.params.id;
     console.log('Fetching order details for ID:', orderId);
 
-    // Fetch order with user and product details
     const order = await orderModel.findById(orderId)
-      .populate('user', 'name email phone') // Include phone if available
+      .populate('user', 'name email phone')
       .populate('orderItems.product', 'name price images');
     
     if (!order) {
