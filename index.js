@@ -1788,6 +1788,154 @@ app.get('/Admin/product/create', adminMiddleWare, async function(request, respon
 //   }
 // }
 
+app.get('/invoice/:id', profileMiddleWare, async (req, res) => {
+  try {
+    const order = await orderModel.findById(req.params.id)
+      .populate('user', 'name email')
+      .populate('orderItems.product', 'name image');
+    
+    // Check if order exists
+    if (!order) {
+      return res.status(404).send('error', { 
+        error: 'Order not found' 
+      });
+    }
+    
+    // Check if the order belongs to the logged-in user
+    if (order.user._id.toString() !== req.user.uid.toString()) {
+      return res.status(403).send('error', { 
+        error: 'Not authorized to access this order' 
+      });
+    }
+
+    // Format the order date
+    const orderDate = new Date(order.createdAt).toLocaleDateString();
+    const orderTime = new Date(order.createdAt).toLocaleTimeString();
+    
+    // Generate invoice number
+    const invoiceNumber = 'INV-${order._id.toString().substring(0, 8)}-${Date.now().toString().substring(9, 13)}';
+    
+    // Calculate order totals
+    const itemsTotal = order.orderItems.reduce((sum, item) => {
+      return sum + (item.price * item.quantity);
+    }, 0).toFixed(2);
+    
+    // Render the invoice template
+    res.render('./Ecommerce/invoice', {
+      order,
+      orderDate,
+      orderTime,
+      invoiceNumber,
+      itemsTotal
+    });
+    
+  } catch (error) {
+    console.error('Error generating invoice:', error);
+    res.status(500).send('error', { 
+      error: 'Error generating invoice. Please try again.' 
+    });
+  }
+});
+
+// Download invoice as PDF
+app.get('/invoice/:id/download', profileMiddleWare, async (req, res) => {
+  try {
+    const order = await orderModel.findById(req.params.id)
+      .populate('user', 'name email')
+      .populate('orderItems.product', 'name image');
+    
+    // Check if order exists and belongs to user
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+    
+    if (order.user._id.toString() !== req.user.uid.toString()) {
+      return res.status(403).send('Not authorized to access this order' );
+    }
+    
+    // Format the order date
+    const orderDate = new Date(order.createdAt).toLocaleDateString();
+    const orderTime = new Date(order.createdAt).toLocaleTimeString();
+    
+    // Generate invoice number
+    const invoiceNumber = `INV-${order._id.toString().substring(0, 8)}-${Date.now().toString().substring(9, 13)}`;
+    
+    // Calculate order totals
+    const itemsTotal = order.orderItems.reduce((sum, item) => {
+      return sum + (item.price * item.quantity);
+    }, 0).toFixed(2);
+    
+    // Read the EJS template file
+    const templatePath = path.resolve('./views/Ecommerce/invoice-pdf.ejs');
+    const template = fs.readFileSync(templatePath, 'utf8');
+    
+    // Render the EJS template with the data
+    const htmlContent = ejs.render(template, {
+      order,
+      orderDate,
+      orderTime,
+      invoiceNumber,
+      itemsTotal,
+      isPdfDownload: true // Flag to hide navigation and buttons in PDF
+    });
+    
+    // PDF configuration options
+    const options = {
+      format: 'A4',
+      border: {
+        top: '15mm',
+        right: '15mm',
+        bottom: '15mm',
+        left: '15mm'
+      },
+      footer: {
+        height: '10mm',
+        contents: {
+          default: '<div style="text-align: center; font-size: 10px; color: #666;">Page {{page}} of {{pages}} - Thank you for shopping with us!</div>',
+        }
+      },
+      type: 'pdf',
+      timeout: 30000
+    };
+    
+    // Create a unique filename
+    const fileName = 'invoice-${order._id}-${Date.now()}.pdf';
+    const filePath = path.join(__dirname, '..', 'temp', fileName);
+    
+    // Ensure the temp directory exists
+    const tempDir = path.join(__dirname, '..', 'temp');
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    
+    // Generate the PDF
+    pdf.create(htmlContent, options).toFile(filePath, (err, result) => {
+      if (err) {
+        console.error('Error creating PDF:', err);
+        return res.status(500).send('Error generating PDF. Please try again.' )
+      }
+      
+      // Set response headers for download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=Invoice-${order._id.toString().substring(0, 8)}.pdf`);
+      
+      // Stream the file to the client
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
+      
+      // Delete the temporary file once download is complete
+      fileStream.on('end', () => {
+        fs.unlink(filePath, (err) => {
+          if (err) console.error('Error deleting temporary file:', err);
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Error downloading invoice:', error);
+    res.status(500).send('Error generating PDF invoice. Please try again.')   
+  }
+});
+
 
 app.use(express.static('public'));
 const PORT = process.env.PORT || 3000;
