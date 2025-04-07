@@ -1037,11 +1037,28 @@ app.get('/admin/orders/:id',adminMiddleWare,async function(request,response){
   response.render('./Admin/order-details',{order,user})
 })
 
+app.get('/Admin/orders/:id/delete', adminMiddleWare, async function(request, response) {
+  try {
+    const orderId = request.params.id;
+    await orderModel.findByIdAndDelete(orderId);
+    // Optionally, remove from user's orders array
+    await userModel.updateOne(
+      { orders: orderId },
+      { $pull: { orders: orderId } }
+    );
+    response.redirect('/Admin/orders');
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    response.status(500).send('Internal Server Error: ' + error.message);
+  }
+});
 
 app.get('/Admin/contacts/:id/delete',adminMiddleWare,async function(request,response){
   await contactModel.findByIdAndDelete(request.params.id)
   response.redirect('/Admin/contacts')
 })
+
+
 
 // Admin Login Route
 app.post('/Admin/login', async function(request, response) {
