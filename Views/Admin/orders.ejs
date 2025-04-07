@@ -45,7 +45,7 @@
 </head>
 <body>
   <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/admin">Admin Panel</a>
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/Admin">Admin Panel</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -62,42 +62,42 @@
         <div class="sidebar-sticky pt-3">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link active" href="/admin">
+              <a class="nav-link active" href="/Admin">
                 Dashboard
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/users">
+              <a class="nav-link" href="/Admin/users">
                 Users
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/posts">
+              <a class="nav-link" href="/Admin/posts">
                 Posts
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/requirements">
+              <a class="nav-link" href="/Admin/requirements">
                 Requirements
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/comments">
+              <a class="nav-link" href="/Admin/comments">
                 Comments
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/contacts">
+              <a class="nav-link" href="/Admin/contacts">
                 Contact Messages
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/orders">
+              <a class="nav-link" href="/Admin/orders">
                 Orders
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/admin/products">
+              <a class="nav-link" href="/Admin/products">
                 Products
               </a>
             </li>
@@ -159,13 +159,13 @@
                     <div class="btn-group">
                       <a href="/Admin/order-details/<%= order._id %>" class="btn btn-sm btn-outline-primary">View</a>
                       <% if (!order.isDelivered) { %>
-                        <a href="/admin/orders/<%= order._id %>/mark-delivered" 
+                        <a href="/Admin/orders/<%= order._id %>/mark-delivered" 
                            class="btn btn-sm btn-outline-success"
                            onclick="return confirm('Mark this order as delivered?')">
                           Mark Delivered
                         </a>
                       <% } %>
-                      <a href="/admin/orders/<%= order._id %>/delete" 
+                      <a href="/Admin/orders/<%= order._id %>/delete" 
                          class="btn btn-sm btn-outline-danger"
                          onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
                         Delete
