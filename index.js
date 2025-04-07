@@ -1263,30 +1263,38 @@ app.get('/Admin/login',async function(request,response){
 
 app.get('/products', isLoggedIn, async function(request, response) {
   try {
-      const { category, minPrice, maxPrice, search, sort } = request.query;
-      let query = {};
-      let sortOption = {};
+    const { category, minPrice, maxPrice, search, sort } = request.query;
+    console.log('Query Params:', { category, minPrice, maxPrice, search, sort });
 
-      if (category) query.category = category;
-      if (minPrice) query.price = { ...query.price, $gte: Number(minPrice) };
-      if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
-      if (search) {
-          query.$or = [
-              { name: { $regex: search, $options: 'i' } },
-              { description: { $regex: search, $options: 'i' } }
-          ];
-      }
-      if (sort === 'price_asc') sortOption = { price: 1 };
-      else if (sort === 'price_desc') sortOption = { price: -1 };
-      else if (sort === 'newest') sortOption = { createdAt: -1 };
+    let query = {};
+    let sortOption = {};
 
-      const products = await productModel.find(query).sort(sortOption);
-      const user = request.user ? await userModel.findById(request.user.uid) : null;
+    if (category) query.category = category;
+    if (minPrice) query.price = { ...query.price, $gte: Number(minPrice) };
+    if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+    if (sort === 'price_asc') sortOption = { price: 1 };
+    else if (sort === 'price_desc') sortOption = { price: -1 };
+    else if (sort === 'newest') sortOption = { createdAt: -1 };
 
-      response.render('./Ecommerce/product', { products, user });
+    console.log('Mongo Query:', query, 'Sort:', sortOption);
+
+    const products = await productModel.find(query).sort(sortOption);
+    const user = request.user ? await userModel.findById(request.user.uid) : null;
+
+    response.render('./Ecommerce/product', { products, user });
   } catch (error) {
-      console.error("Error fetching products", error);
-      response.status(500).send('Internal Server Error');
+    console.error("Error fetching products:", {
+      message: error.message,
+      stack: error.stack,
+      query: request.query
+    });
+    response.status(500).send('Internal Server Error');
   }
 });
 
