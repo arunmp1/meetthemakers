@@ -1515,60 +1515,91 @@ app.get('/products/create', profileMiddleWare, async (request, response) => {
 
 app.post('/order/create', profileMiddleWare, async function(request, response) {
   try {
-      const { shippingAddress, paymentMethod } = request.body;
-      const cart = await cartModel.findOne({ user: request.user.uid }).populate('cartItems.products');
+    const { shippingAddress, paymentMethod } = request.body;
+    console.log('Order creation started:', { userId: request.user.uid, shippingAddress, paymentMethod });
 
-      if (!cart || cart.cartItems.length === 0) {
-          return response.status(400).send('Cart is Empty');
+    const cart = await cartModel.findOne({ user: request.user.uid }).populate('cartItems.products');
+    if (!cart || cart.cartItems.length === 0) {
+      console.log('Cart is empty or not found:', request.user.uid);
+      return response.status(400).send('Cart is Empty');
+    }
+
+    console.log('Cart items:', cart.cartItems.map(item => ({
+      productId: item.products._id,
+      quantity: item.quantity,
+      stock: item.products.stock
+    })));
+
+    // Check stock availability
+    for (const item of cart.cartItems) {
+      const product = item.products;
+      if (!product) {
+        console.log('Product missing in cart:', item.products);
+        return response.status(400).send('One or more products no longer exist');
       }
-
-      for (const item of cart.cartItems) {
-          const product = item.products;
-          if (product.stock < item.quantity) {
-              return response.status(400).send(`Sorry, only ${product.stock} units of ${product.name} available`);
-          }
+      if (product.stock < item.quantity) {
+        console.log('Insufficient stock:', { productId: product._id, name: product.name, stock: product.stock, requested: item.quantity });
+        return response.status(400).send(`Sorry, only ${product.stock} units of ${product.name} available`);
       }
+    }
 
-      const subtotal = cart.cartItems.reduce((total, item) => 
-          total + (item.products.price * item.quantity), 0);
-      const shippingPrice = subtotal > 0 ? 100 : 0;
-      const taxPrice = Math.round(subtotal * 0.18);
-      const totalPrice = subtotal + shippingPrice + taxPrice;
+    // Calculate totals
+    const subtotal = cart.cartItems.reduce((total, item) => 
+      total + (item.products.price * item.quantity), 0);
+    const shippingPrice = subtotal > 0 ? 100 : 0;
+    const taxPrice = Math.round(subtotal * 0.18);
+    const totalPrice = subtotal + shippingPrice + taxPrice;
 
-      const orderItems = cart.cartItems.map(item => ({
-          product: item.products._id,
-          quantity: item.quantity,
-          price: item.products.price
-      }));
+    console.log('Order totals:', { subtotal, shippingPrice, taxPrice, totalPrice });
 
-      const order = new orderModel({
-          user: request.user.uid,
-          orderItems,
-          shippingAddress,
-          taxPrice,
-          shippingPrice,
-          paymentMethod,
-          totalPrice
-      });
+    // Prepare order items
+    const orderItems = cart.cartItems.map(item => ({
+      product: item.products._id,
+      quantity: item.quantity,
+      price: item.products.price
+    }));
 
-      const stockUpdatePromises = cart.cartItems.map(async (item) => {
-          const product = await productModel.findById(item.products._id);
-          product.stock -= item.quantity;
-          return product.save();
-      });
+    // Create order
+    const order = new orderModel({
+      user: request.user.uid,
+      orderItems,
+      shippingAddress,
+      taxPrice,
+      shippingPrice,
+      paymentMethod,
+      totalPrice
+    });
 
-      await Promise.all(stockUpdatePromises);
-      await order.save();
+    // Update stock
+    const stockUpdatePromises = cart.cartItems.map(async (item) => {
+      const product = await productModel.findById(item.products._id);
+      product.stock -= item.quantity;
+      console.log('Updating stock:', { productId: product._id, name: product.name, newStock: product.stock });
+      return product.save();
+    });
 
-      await userModel.findByIdAndUpdate(request.user.uid, {
-          $push: { orders: order._id }
-      });
-      await cartModel.findOneAndDelete({ user: request.user.uid });
+    await Promise.all(stockUpdatePromises);
+    await order.save();
+    console.log('Order saved:', order._id);
 
-      response.redirect(`/orders/${order._id}`);
+    // Update user orders
+    await userModel.findByIdAndUpdate(request.user.uid, {
+      $push: { orders: order._id }
+    });
+
+    // Clear cart
+    await cartModel.findOneAndDelete({ user: request.user.uid });
+    console.log('Cart cleared for user:', request.user.uid);
+
+    response.redirect(`/orders/${order._id}`);
   } catch (error) {
-      console.error('Error creating order:', error);
-      response.status(500).send('Internal Server Error');
+    console.error('Error creating order:', {
+      message: error.message,
+      stack: error.stack,
+      userId: request.user.uid,
+      body: request.body
+    });
+    response.status(500).send('Internal Server Error');
   }
 });
 
