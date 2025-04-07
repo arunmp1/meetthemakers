@@ -1707,26 +1707,33 @@ app.post('/products/:id/review',profileMiddleWare,async function(request,respons
 })
 
 
-app.get('/Admin/orders/:id/mark-delivered',adminMiddleWare,async function(request,response){
-  try{
-    const order = await orderModel.findById(request.params.id)
-    
-    if(!order){
-      return response.status(404).send('Order not found')
+app.get('/Admin/orders/:id/mark-delivered', adminMiddleWare, async function(request, response) {
+  try {
+    const orderId = request.params.id;
+    console.log('Marking order as delivered:', orderId);
+
+    const order = await orderModel.findById(orderId);
+    if (!order) {
+      console.log('Order not found:', orderId);
+      return response.status(404).send('Order not found');
     }
 
     order.isDelivered = true;
     order.deliveredAt = Date.now();
 
-
     await order.save();
+    console.log('Order marked as delivered:', orderId);
 
-    response.redirect(`/Admin/orders/${order._id}`)
-  }catch(error){
-    console.error('Error marking order as delivered:',error);
-    res.status(500).send('Server error occurred while updating delivery status');
+    response.redirect('/Admin/orders'); // Redirect to the orders list
+  } catch (error) {
+    console.error('Error marking order as delivered:', {
+      message: error.message,
+      stack: error.stack,
+      orderId: request.params.id
+    });
+    response.status(500).send('Server error occurred while updating delivery status');
   }
-})
+});
 
 app.get('/Admin/product/create', adminMiddleWare, async function(request, response) {
   try {
