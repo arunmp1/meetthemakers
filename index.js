@@ -1037,20 +1037,20 @@ app.get('/admin/orders/:id',adminMiddleWare,async function(request,response){
   response.render('./admin/order-details',{order,user})
 })
 
-app.post('/Admin/orders/:id/delete', adminMiddleWare, async (req, res) => {
+app.get('/Admin/orders/:id', adminMiddleWare, async function(request, response) {
   try {
-      const orderId = req.params.id;
-      const order = await orderModel.findById(orderId);
-      
-      if (!order) {
-          return res.status(404).send('Order not found');
-      }
-
-      await orderModel.deleteOne({ _id: orderId });
-      res.redirect('/Admin/orders');
+    const order = await orderModel.findById(request.params.id);
+    if (!order) {
+      return response.status(404).send('Order not found');
+    }
+    const user = await userModel.findById(order.user);
+    if (!user) {
+      return response.status(404).send('User not found');
+    }
+    response.render('./Admin/order-details', { order, user });
   } catch (error) {
-      console.error('Error deleting order:', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Error fetching order:', error);
+    response.status(500).send('Internal Server Error: ' + error.message);
   }
 });
 
