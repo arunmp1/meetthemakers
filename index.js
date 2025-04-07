@@ -1351,58 +1351,61 @@ app.get('/cart', profileMiddleWare, async function(request, response) {
 });
 
 
-app.post('/cart/add/:productId',profileMiddleWare,async function(request,response){
-  try{
+app.post('/cart/add/:productId', profileMiddleWare, async function(request, response) {
+  try {
     const productId = request.params.productId;
-    const quantity = request.body.quantity || 1;
+    const quantity = parseInt(request.body.quantity) || 1; // Convert to number, default to 1
 
+    console.log('Adding to cart:', { productId, quantity, userId: request.user.uid });
 
     const product = await productModel.findById(productId);
-
-    if(!product){
-      return response.status(404).send('Product Not Found')
+    if (!product) {
+      console.log('Product not found:', productId);
+      return response.status(404).send('Product Not Found');
     }
 
-    if(product.stock<quantity){
-      return response.status(400).send(`Sorry, only ${product.stock} units available in stock`)
+    if (product.stock < quantity) {
+      console.log('Insufficient stock:', { stock: product.stock, requested: quantity });
+      return response.status(400).send(`Sorry, only ${product.stock} units available in stock`);
     }
 
-
-    let cart = await cartModel.findOne({user:request.user.uid})
-
-    if(!cart){
+    let cart = await cartModel.findOne({ user: request.user.uid });
+    if (!cart) {
       cart = new cartModel({
-        user:request.user.uid,
-        cartItems:[{
-          products:productId,
-          quantity:quantity
-        }]
-      })
-    }else{
+        user: request.user.uid,
+        cartItems: [{ products: productId, quantity }]
+      });
+      console.log('Created new cart:', cart);
+    } else {
       const existingItem = cart.cartItems.find(
         item => item.products.toString() === productId
       );
-
-      if(existingItem){
-        if(existingItem.quantity + quantity > product.stock){
-          return response.status(400).send(`Cannot add more items. Stock limit is ${product.stock}`)
+      if (existingItem) {
+        if (existingItem.quantity + quantity > product.stock) {
+          console.log('Stock limit exceeded:', { current: existingItem.quantity, requested: quantity, stock: product.stock });
+          return response.status(400).send(`Cannot add more items. Stock limit is ${product.stock}`);
         }
-        existingItem.quantity += quantity
-      }else{
-        cart.cartItems.push({
-          products:productId,
-          quantity:quantity
-        })
+        existingItem.quantity += quantity;
+        console.log('Updated existing item:', existingItem);
+      } else {
+        cart.cartItems.push({ products: productId, quantity });
+        console.log('Added new item to cart:', { products: productId, quantity });
       }
     }
 
     await cart.save();
-    response.redirect('/cart')
-  }catch(error){
-    console.error('Error Adding to Cart',error)
+    console.log('Cart saved successfully:', cart._id);
+    response.redirect('/cart');
+  } catch (error) {
+    console.error('Error Adding to Cart:', {
+      message: error.message,
+      stack: error.stack,
+      productId: request.params.productId,
+      userId: request.user.uid
+    });
     response.status(500).send('Internal Server Error');
   }
-})
+});
 
 app.post('/cart/update',profileMiddleWare,async function(request,response){
   try{
