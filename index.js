@@ -1034,7 +1034,7 @@ app.get('/admin/orders/:id',adminMiddleWare,async function(request,response){
   const order = await orderModel.findById(request.params.id)
   const user = await userModel.findById(order.user)
 
-  response.render('./admin/order-details',{order,user})
+  response.render('./Admin/order-details',{order,user})
 })
 
 
