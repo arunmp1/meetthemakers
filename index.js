@@ -991,7 +991,7 @@ app.get('/Admin/contacts',adminMiddleWare,async function(request,response){
 });
 
 
-app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
+app.get('/admin/orders', adminMiddleWare, async function(request, response) {
   try {
     // Extract filter parameters from query string
     const { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount } = request.query;
@@ -1051,7 +1051,7 @@ app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
     const deliveredOrders = orders.filter(order => order.isDelivered).length;
     
     // Render the view with filtered orders and filter data
-    response.render('./admin/orders', {
+    response.render('./Admin/orders', {
       orders,
       stats: {
         totalOrders,
