@@ -321,28 +321,39 @@
                     <% } %>
                 <% }); %>
             </div>
-            <div class="cart-summary">
-                <h2 class="summary-title">Order Summary</h2>
-                <div class="summary-item">
-                    <span>Subtotal</span>
-                    <span>₹<%= subtotal %></span>
-                </div>
-                <div class="summary-item">
-                    <span>Shipping</span>
-                    <span>₹<%= subtotal > 0 ? 100 : 0 %></span>
-                </div>
-                <div class="summary-item">
-                    <span>Tax</span>
-                    <span>₹<%= Math.round(subtotal * 0.18) %></span>
-                </div>
-                <div class="summary-total">
-                    <span>Total</span>
-                    <span>₹<%= subtotal + (subtotal > 0 ? 100 : 0) + Math.round(subtotal * 0.18) %></span>
-                </div>
-                <a href="/orders"><button class="checkout-btn">Proceed to Checkout</button></a>
-            </div>
-        <% } %>
+ <div class="cart-summary">
+  <h2 class="summary-title">Order Summary</h2>
+  <div class="summary-item">
+    <span>Subtotal</span>
+    <span>₹<%= subtotal %></span>
+  </div>
+  <div class="summary-item">
+    <span>Shipping</span>
+    <span>₹<%= subtotal > 0 ? 100 : 0 %></span>
+  </div>
+  <div class="summary-item">
+    <span>Tax</span>
+    <span>₹<%= Math.round(subtotal * 0.18) %></span>
+  </div>
+  <div class="summary-total">
+    <span>Total</span>
+    <span>₹<%= subtotal + (subtotal > 0 ? 100 : 0) + Math.round(subtotal * 0.18) %></span>
+  </div>
+  <form action="/order/create" method="POST">
+    <div style="margin-top: 20px;">
+      <label for="shippingAddress">Shipping Address:</label>
+      <input type="text" id="shippingAddress" name="shippingAddress" required style="width: 100%; padding: 8px; margin-top: 5px;">
     </div>
+    <div style="margin-top: 10px;">
+      <label for="paymentMethod">Payment Method:</label>
+      <select id="paymentMethod" name="paymentMethod" required style="width: 100%; padding: 8px; margin-top: 5px;">
+        <option value="cod">Cash on Delivery</option>
+        <option value="card">Credit/Debit Card</option>
+      </select>
+    </div>
+    <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+  </form>
+</div>
 
     <%- include('../partials/footer') %>
 </body>
