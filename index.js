@@ -1816,7 +1816,7 @@ app.get('/invoice/:id', profileMiddleWare, async (req, res) => {
     const orderTime = new Date(order.createdAt).toLocaleTimeString();
     
     // Generate invoice number
-    const invoiceNumber = 'INV-${order._id.toString().substring(0, 8)}-${Date.now().toString().substring(9, 13)}';
+    const invoiceNumber = `INV-${order._id.toString().substring(0, 8)}-${Date.now().toString().substring(9, 13)}`;
     
     // Calculate order totals
     const itemsTotal = order.orderItems.reduce((sum, item) => {
