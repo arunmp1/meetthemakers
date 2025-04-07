@@ -993,86 +993,40 @@ app.get('/Admin/contacts',adminMiddleWare,async function(request,response){
 
 app.get('/admin/orders', adminMiddleWare, async function(request, response) {
   try {
-    // Extract filter parameters from query string
-    const { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount } = request.query;
-    
-    // Build filter object
-    const filter = {};
-    
-    // Payment status filter
-    if (paymentStatus) {
-      filter.isPaid = paymentStatus === 'paid';
-    }
-    
-    // Delivery status filter
-    if (deliveryStatus) {
-      filter.isDelivered = deliveryStatus === 'delivered';
-    }
-    
-    // Payment method filter
-    if (paymentMethod) {
-      filter.paymentMethod = paymentMethod;
-    }
-    
-    // Date range filter
-    if (dateFrom || dateTo) {
-      filter.createdAt = {};
-      if (dateFrom) {
-        filter.createdAt.$gte = new Date(dateFrom);
+      const { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount } = request.query;
+      const filter = {};
+      if (paymentStatus) filter.isPaid = paymentStatus === 'paid';
+      if (deliveryStatus) filter.isDelivered = deliveryStatus === 'delivered';
+      if (paymentMethod) filter.paymentMethod = paymentMethod;
+      if (dateFrom || dateTo) {
+          filter.createdAt = {};
+          if (dateFrom) filter.createdAt.$gte = new Date(dateFrom);
+          if (dateTo) {
+              const toDate = new Date(dateTo);
+              toDate.setHours(23, 59, 59, 999);
+              filter.createdAt.$lte = toDate;
+          }
       }
-      if (dateTo) {
-        // Set to end of day for the to-date
-        const toDate = new Date(dateTo);
-        toDate.setHours(23, 59, 59, 999);
-        filter.createdAt.$lte = toDate;
+      if (minAmount || maxAmount) {
+          filter.totalPrice = {};
+          if (minAmount) filter.totalPrice.$gte = parseFloat(minAmount);
+          if (maxAmount) filter.totalPrice.$lte = parseFloat(maxAmount);
       }
-    }
-    
-    // Price range filter
-    if (minAmount || maxAmount) {
-      filter.totalPrice = {};
-      if (minAmount) {
-        filter.totalPrice.$gte = parseFloat(minAmount);
-      }
-      if (maxAmount) {
-        filter.totalPrice.$lte = parseFloat(maxAmount);
-      }
-    }
-    
-    // Fetch orders with filters and sort by newest first (using your existing sort method)
-    const orders = await orderModel.find(filter)
-      .populate('user', 'name email')
-      .sort({_id: -1});
-    
-    // Calculate statistics for the filtered orders
-    const totalOrders = orders.length;
-    const totalAmount = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-    const paidOrders = orders.filter(order => order.isPaid).length;
-    const deliveredOrders = orders.filter(order => order.isDelivered).length;
-    
-    // Render the view with filtered orders and filter data
-    response.render('./Admin/orders', {
-      orders,
-      stats: {
-        totalOrders,
-        totalAmount,
-        paidOrders,
-        deliveredOrders
-      },
-      // Pass the current filter values back to the template
-      filters: {
-        paymentStatus,
-        deliveryStatus,
-        paymentMethod,
-        dateFrom,
-        dateTo,
-        minAmount,
-        maxAmount
-      }
-    });
+      const orders = await orderModel.find(filter).populate('user', 'name email').sort({_id: -1});
+      const totalOrders = orders.length;
+      const totalAmount = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+      const paidOrders = orders.filter(order => order.isPaid).length;
+      const deliveredOrders = orders.filter(order => order.isDelivered).length;
+      const adminUser = await userModel.findById(request.user.uid);
+      response.render('./Admin/orders', {
+          orders,
+          stats: { totalOrders, totalAmount, paidOrders, deliveredOrders },
+          filters: { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount },
+          adminUser
+      });
   } catch (error) {
-    console.error('Error fetching orders:', error);
-    response.status(500).send('Server Error');
+      console.error('Error fetching orders:', error);
+      response.status(500).send('Server Error');
   }
 });
 
