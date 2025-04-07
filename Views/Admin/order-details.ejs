@@ -6,20 +6,51 @@
   <title>Admin - Order Details</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 48px 0 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); }
-    .sidebar-sticky { position: relative; top: 0; height: calc(100vh - 48px); padding-top: .5rem; overflow-x: hidden; overflow-y: auto; }
-    .nav-link { color: #333; }
-    .nav-link.active { color: #007bff; }
-    .badge-paid { background-color: #28a745; }
-    .badge-unpaid { background-color: #dc3545; }
-    .badge-delivered { background-color: #28a745; }
-    .badge-pending { background-color: #ffc107; }
-    .product-image { width: 50px; height: 50px; object-fit: cover; }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 48px 0 0;
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    }
+    .sidebar-sticky {
+      position: relative;
+      top: 0;
+      height: calc(100vh - 48px);
+      padding-top: .5rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .nav-link {
+      color: #333;
+    }
+    .nav-link.active {
+      color: #007bff;
+    }
+    .badge-paid {
+      background-color: #28a745;
+    }
+    .badge-unpaid {
+      background-color: #dc3545;
+    }
+    .badge-delivered {
+      background-color: #28a745;
+    }
+    .badge-pending {
+      background-color: #ffc107;
+    }
+    .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body>
   <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/Admin">Admin Panel</a>
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/admin">Admin Panel</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -35,24 +66,53 @@
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <div class="sidebar-sticky pt-3">
           <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" href="/Admin">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/Admin/users">Users</a></li>
-            <li class="nav-item"><a class="nav-link" href="/Admin/posts">Posts</a></li>
-            <li class="nav-item"><a class="nav-link" href="/Admin/products">Products</a></li>
-            <li class="nav-item"><a class="nav-link active" href="/Admin/orders">Orders</a></li>
-            <li class="nav-item"><a class="nav-link" href="/Admin/requirements">Requirements</a></li>
-            <li class="nav-item"><a class="nav-link" href="/Admin/comments">Comments</a></li>
-            <li class="nav-item"><a class="nav-link" href="/Admin/contacts">Contact Messages</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin">
+                Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/users">
+                Users
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/posts">
+                Posts
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/products">
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin/orders">
+                Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/requirements">
+                Requirements
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/comments">
+                Comments
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/contacts">
+                Contact Messages
+              </a>
+            </li>
           </ul>
           <hr>
           <div class="px-3 py-3">
-            <strong>Logged in as:</strong><br>
-            <% if (adminUser) { %>
-              <%= adminUser.name || 'Unknown Admin' %><br>
-              <a href="/logout" class="btn btn-sm btn-danger mt-2">Logout</a>
-            <% } else { %>
-              Unknown Admin
-            <% } %>
+            <strong>Logged in as:</strong>
+            <br>
+            Siddhant<br>
+            <a href="/logout" class="btn btn-sm btn-danger mt-2">Logout</a>
           </div>
         </div>
       </nav>
@@ -61,149 +121,150 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2">Order Details</h1>
           <div class="btn-toolbar mb-2 mb-md-0">
-            <a href="/Admin/orders" class="btn btn-sm btn-outline-secondary me-2">Back to Orders</a>
-            <% if (order && !order.isDelivered) { %>
-              <a href="/Admin/orders/<%= order._id %>/mark-delivered" 
+            <a href="/admin/orders" class="btn btn-sm btn-outline-secondary me-2">
+              Back to Orders
+            </a>
+            <% if (!order.isDelivered) { %>
+              <a href="/admin/orders/<%= order._id %>/mark-delivered" 
                  class="btn btn-sm btn-outline-success me-2"
                  onclick="return confirm('Mark this order as delivered?')">
                 Mark Delivered
               </a>
             <% } %>
-            <% if (order) { %>
-              <form action="/Admin/orders/<%= order._id %>/delete" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-sm btn-outline-danger"
-                        onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
-                  Delete Order
-                </button>
-              </form>
-            <% } %>
+            <a href="/admin/orders/<%= order._id %>/delete" 
+               class="btn btn-sm btn-outline-danger"
+               onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
+              Delete Order
+            </a>
           </div>
         </div>
 
-        <% if (order) { %>
-          <div class="row">
-            <div class="col-md-8">
-              <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Order Info</h5></div>
-                <div class="card-body">
-                  <p><strong>Order ID:</strong> <%= order._id %></p>
-                  <p><strong>Date Placed:</strong> <%= order.createdAt ? new Date(order.createdAt).toLocaleString() : 'N/A' %></p>
-                  <p>
-                    <strong>Payment Status:</strong> 
-                    <span class="badge <%= order.isPaid ? 'badge-paid text-bg-success' : 'badge-unpaid text-bg-danger' %>">
-                      <%= order.isPaid ? 'Paid' : 'Unpaid' %>
-                    </span>
-                    <% if (order.isPaid && order.paidAt) { %>
-                      <small>on <%= new Date(order.paidAt).toLocaleString() %></small>
-                    <% } %>
-                  </p>
-                  <p>
-                    <strong>Delivery Status:</strong> 
-                    <span class="badge <%= order.isDelivered ? 'badge-delivered text-bg-success' : 'badge-pending text-bg-warning' %>">
-                      <%= order.isDelivered ? 'Delivered' : 'Pending' %>
-                    </span>
-                    <% if (order.isDelivered && order.deliveredAt) { %>
-                      <small>on <%= new Date(order.deliveredAt).toLocaleString() %></small>
-                    <% } %>
-                  </p>
-                  <% if (order.paymentResult && order.paymentResult.id) { %>
-                    <p><strong>Payment ID:</strong> <%= order.paymentResult.id %></p>
-                    <p><strong>Payment Status:</strong> <%= order.paymentResult.status %></p>
-                    <% if (order.paymentResult.email_address) { %>
-                      <p><strong>Payment Email:</strong> <%= order.paymentResult.email_address %></p>
-                    <% } %>
-                  <% } %>
-                </div>
+        <div class="row">
+          <div class="col-md-8">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Order Info</h5>
               </div>
-
-              <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Order Items</h5></div>
-                <div class="card-body">
-                  <% if (order.orderItems && order.orderItems.length > 0) { %>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Quantity</th>
-                          <th>Price</th>
-                          <th>Subtotal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% order.orderItems.forEach(item => { %>
-                          <tr>
-                            <td>
-                              <div class="d-flex align-items-center">
-                                <% if (item.product && item.product.images && item.product.images.length > 0) { %>
-                                  <img src="data:<%= item.product.images[0].contentType %>;base64,<%= item.product.images[0].data.toString('base64') %>" class="product-image me-2" alt="<%= item.product.name || 'Product' %>">
-                                <% } %>
-                                <span><%= item.product ? item.product.name || 'Product not found' : 'Product not found' %></span>
-                              </div>
-                            </td>
-                            <td><%= item.quantity || 0 %></td>
-                            <td>₹<%= item.price ? item.price.toFixed(2) : '0.00' %></td>
-                            <td>₹<%= item.price && item.quantity ? (item.price * item.quantity).toFixed(2) : '0.00' %></td>
-                          </tr>
-                        <% }); %>
-                      </tbody>
-                    </table>
-                  <% } else { %>
-                    <p>No items in this order.</p>
+              <div class="card-body">
+                <p><strong>Order ID:</strong> <%= order._id %></p>
+                <p><strong>Date Placed:</strong> <%= new Date(order.createdAt).toLocaleString() %></p>
+                <p>
+                  <strong>Payment Status:</strong> 
+                  <span class="badge <%= order.isPaid ? 'badge-paid text-bg-success' : 'badge-unpaid text-bg-danger' %>">
+                    <%= order.isPaid ? 'Paid' : 'Unpaid' %>
+                  </span>
+                  <% if (order.isPaid && order.paidAt) { %>
+                    <small>on <%= new Date(order.paidAt).toLocaleString() %></small>
                   <% } %>
-                </div>
+                </p>
+                <p>
+                  <strong>Delivery Status:</strong> 
+                  <span class="badge <%= order.isDelivered ? 'badge-delivered text-bg-success' : 'badge-pending text-bg-warning' %>">
+                    <%= order.isDelivered ? 'Delivered' : 'Pending' %>
+                  </span>
+                  <% if (order.isDelivered && order.deliveredAt) { %>
+                    <small>on <%= new Date(order.deliveredAt).toLocaleString() %></small>
+                  <% } %>
+                </p>
+                <% if (order.paymentResult && order.paymentResult.id) { %>
+                  <p><strong>Payment ID:</strong> <%= order.paymentResult.id %></p>
+                  <p><strong>Payment Status:</strong> <%= order.paymentResult.status %></p>
+                  <% if (order.paymentResult.email_address) { %>
+                    <p><strong>Payment Email:</strong> <%= order.paymentResult.email_address %></p>
+                  <% } %>
+                <% } %>
               </div>
             </div>
 
-            <div class="col-md-4">
-              <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Customer</h5></div>
-                <div class="card-body">
-                  <p><strong>Name:</strong> <%= order.user ? (order.user.name || 'Unknown') : 'Unknown' %></p>
-                  <p><strong>Email:</strong> <%= order.user ? (order.user.email || 'N/A') : 'N/A' %></p>
-                  <% if (order.user && order.user.phone) { %>
-                    <p><strong>Phone:</strong> <%= order.user.phone %></p>
-                  <% } %>
-                </div>
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Order Items</h5>
               </div>
-
-              <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Shipping Address</h5></div>
-                <div class="card-body">
-                  <p><%= order.shippingAddress ? (order.shippingAddress.street || 'N/A') : 'N/A' %></p>
-                  <p><%= order.shippingAddress ? `${order.shippingAddress.city || ''}, ${order.shippingAddress.postalCode || ''}` : 'N/A' %></p>
-                  <p><%= order.shippingAddress ? (order.shippingAddress.country || 'N/A') : 'N/A' %></p>
-                </div>
-              </div>
-
-              <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Payment Details</h5></div>
-                <div class="card-body">
-                  <p><strong>Method:</strong> <%= order.paymentMethod || 'N/A' %></p>
-                  <hr>
-                  <p class="d-flex justify-content-between">
-                    <span>Subtotal:</span>
-                    <span>₹<%= order.totalPrice && order.taxPrice && order.shippingPrice ? (order.totalPrice - order.taxPrice - order.shippingPrice).toFixed(2) : '0.00' %></span>
-                  </p>
-                  <p class="d-flex justify-content-between">
-                    <span>Tax:</span>
-                    <span>₹<%= order.taxPrice ? order.taxPrice.toFixed(2) : '0.00' %></span>
-                  </p>
-                  <p class="d-flex justify-content-between">
-                    <span>Shipping:</span>
-                    <span>₹<%= order.shippingPrice ? order.shippingPrice.toFixed(2) : '0.00' %></span>
-                  </p>
-                  <hr>
-                  <p class="d-flex justify-content-between fw-bold">
-                    <span>Total:</span>
-                    <span>₹<%= order.totalPrice ? order.totalPrice.toFixed(2) : '0.00' %></span>
-                  </p>
-                </div>
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% order.orderItems.forEach(item => { %>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <% if (item.product && item.product.images && item.product.images.length > 0) { %>
+                              <img src="<%= item.product.images[0] %>" class="product-image me-2" alt="<%= item.product.name %>">
+                            <% } %>
+                            <span><%= item.product ? item.product.name : 'Product not found' %></span>
+                          </div>
+                        </td>
+                        <td><%= item.quantity %></td>
+                        <td>₹<%= item.price.toFixed(2) %></td>
+                        <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-        <% } else { %>
-          <div class="alert alert-warning">Order not found.</div>
-        <% } %>
+
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Customer</h5>
+              </div>
+              <div class="card-body">
+                <p><strong>Name:</strong> <%= user.name %></p>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <% if (order.user && order.user.phone) { %>
+                  <p><strong>Phone:</strong> <%= order.user.phone %></p>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Shipping Address</h5>
+              </div>
+              <div class="card-body">
+                <p><%= order.shippingAddress.street %></p>
+                <p><%= order.shippingAddress.city %>, <%= order.shippingAddress.postalCode %></p>
+                <p><%= order.shippingAddress.country %></p>
+              </div>
+            </div>
+
+            <div class="card mb-4">
+              <div class="card-header">
+                <h5 class="mb-0">Payment Details</h5>
+              </div>
+              <div class="card-body">
+                <p><strong>Method:</strong> <%= order.paymentMethod %></p>
+                <hr>
+                <p class="d-flex justify-content-between">
+                  <span>Subtotal:</span>
+                  <span>₹<%= (order.totalPrice - order.taxPrice - order.shippingPrice).toFixed(2) %></span>
+                </p>
+                <p class="d-flex justify-content-between">
+                  <span>Tax:</span>
+                  <span>₹<%= order.taxPrice.toFixed(2) %></span>
+                </p>
+                <p class="d-flex justify-content-between">
+                  <span>Shipping:</span>
+                  <span>₹<%= order.shippingPrice.toFixed(2) %></span>
+                </p>
+                <hr>
+                <p class="d-flex justify-content-between fw-bold">
+                  <span>Total:</span>
+                  <span>₹<%= order.totalPrice.toFixed(2) %></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
