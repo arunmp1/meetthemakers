@@ -1261,6 +1261,7 @@ app.get('/Admin/login',async function(request,response){
 })
 
 
+
 app.get('/products', isLoggedIn, async function(request, response) {
   try {
     const { category, minPrice, maxPrice, search, sort } = request.query;
@@ -1270,27 +1271,36 @@ app.get('/products', isLoggedIn, async function(request, response) {
     let sortOption = {};
 
     // Filters
-    if (category) query.category = category;
+    if (category && category !== '') query.category = category;
     if (minPrice && !isNaN(Number(minPrice))) {
       query.price = { ...query.price, $gte: Number(minPrice) };
     }
     if (maxPrice && !isNaN(Number(maxPrice))) {
       query.price = { ...query.price, $lte: Number(maxPrice) };
     }
-    if (search) {
+    if (search && search.trim() !== '') {
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { name: { $regex: search.trim(), $options: 'i' } },
+        { description: { $regex: search.trim(), $options: 'i' } }
       ];
     }
 
     // Sorting
-    if (sort === 'price_asc') sortOption = { price: 1 };
-    else if (sort === 'price_desc') sortOption = { price: -1 };
-    else if (sort === 'newest') sortOption = { createdAt: -1 };
-    else if (sort === 'bestsellers') {
-      // Add logic for bestsellers if you have a field (e.g., sales count)
-      sortOption = { sales: -1 }; // Placeholder; adjust based on your schema
+    switch (sort) {
+      case 'price_asc':
+        sortOption = { price: 1 };
+        break;
+      case 'price_desc':
+        sortOption = { price: -1 };
+        break;
+      case 'newest':
+        sortOption = { createdAt: -1 };
+        break;
+      case 'bestsellers':
+        sortOption = { averageRating: -1 }; // Use averageRating instead of sales
+        break;
+      default:
+        sortOption = {};
     }
 
     console.log('Mongo Query:', query, 'Sort:', sortOption);
