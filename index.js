@@ -1033,42 +1033,16 @@ app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
 app.get('/Admin/orders/:id', adminMiddleWare, async function(request, response) {
   try {
     const orderId = request.params.id;
-    console.log('Fetching order details for ID:', orderId);
-
     const order = await orderModel.findById(orderId)
       .populate('user', 'name email phone')
       .populate('orderItems.product', 'name price images');
-    
-    if (!order) {
-      console.log('Order not found for ID:', orderId);
-      return response.status(404).send('Order not found');
-    }
-
-    console.log('Order fetched:', {
-      id: order._id,
-      userId: order.user ? order.user._id : 'null',
-      orderItemsCount: order.orderItems.length
-    });
-
+    if (!order) return response.status(404).send('Order not found');
     const adminUser = await userModel.findById(request.user.uid);
-    if (!adminUser) {
-      console.log('Admin user not found for UID:', request.user.uid);
-      return response.status(404).send('Admin user not found');
-    }
-
-    console.log('Rendering order-details with:', {
-      orderId: order._id,
-      adminUserId: adminUser._id
-    });
-
+    if (!adminUser) return response.status(404).send('Admin user not found');
+    console.log('Rendering template from:', path.join(__dirname, 'views/Admin/order-details.ejs'));
     response.render('./Admin/order-details', { order, adminUser });
   } catch (error) {
-    console.error('Error in /Admin/orders/:id:', {
-      message: error.message,
-      stack: error.stack,
-      orderId: request.params.id,
-      userId: request.user.uid
-    });
+    console.error('Error:', error);
     response.status(500).send('Internal Server Error: ' + error.message);
   }
 });
