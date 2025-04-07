@@ -991,7 +991,7 @@ app.get('/Admin/contacts',adminMiddleWare,async function(request,response){
 });
 
 
-app.get('/admin/orders', adminMiddleWare, async function(request, response) {
+app.get('/Admin/orders', adminMiddleWare, async function(request, response) {
   try {
     // Extract filter parameters from query string
     const { paymentStatus, deliveryStatus, paymentMethod, dateFrom, dateTo, minAmount, maxAmount } = request.query;
