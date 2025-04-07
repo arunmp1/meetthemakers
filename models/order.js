@@ -1,4 +1,3 @@
-// ./models/order.js
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
@@ -10,7 +9,7 @@ const orderSchema = new mongoose.Schema({
     orderItems: [{
         product: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'product',
+            ref: 'products', // Changed from 'product' to 'products'
             required: true
         },
         quantity: {
@@ -21,7 +20,7 @@ const orderSchema = new mongoose.Schema({
         price: {
             type: Number,
             required: true,
-            min: 0 // Ensure price isn’t negative
+            min: 0
         }
     }],
     shippingAddress: {
@@ -49,7 +48,7 @@ const orderSchema = new mongoose.Schema({
     paymentResult: {
         id: {
             type: String,
-            required: false // Optional, set only after payment
+            required: false
         },
         status: {
             type: String,
@@ -68,19 +67,19 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: 0.0,
-        min: 0 // Ensure non-negative
+        min: 0
     },
     shippingPrice: {
         type: Number,
         required: true,
         default: 0.0,
-        min: 0 // Ensure non-negative
+        min: 0
     },
     totalPrice: {
         type: Number,
         required: true,
         default: 0.0,
-        min: 0 // Ensure non-negative
+        min: 0
     },
     isPaid: {
         type: Boolean,
@@ -89,7 +88,7 @@ const orderSchema = new mongoose.Schema({
     },
     paidAt: {
         type: Date,
-        required: false // Optional, set only when paid
+        required: false
     },
     isDelivered: {
         type: Boolean,
@@ -98,12 +97,12 @@ const orderSchema = new mongoose.Schema({
     },
     deliveredAt: {
         type: Date,
-        required: false // Optional, set only when delivered
+        required: false
     },
     createdAt: {
         type: Date,
-        default: Date.now // Explicitly defined for clarity
+        default: Date.now
     }
-}, { timestamps: false }); // Set to false since we manually defined createdAt
+}, { timestamps: false });
 
 module.exports = mongoose.model('order', orderSchema);
