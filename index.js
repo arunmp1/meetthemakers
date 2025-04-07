@@ -1269,18 +1269,29 @@ app.get('/products', isLoggedIn, async function(request, response) {
     let query = {};
     let sortOption = {};
 
+    // Filters
     if (category) query.category = category;
-    if (minPrice) query.price = { ...query.price, $gte: Number(minPrice) };
-    if (maxPrice) query.price = { ...query.price, $lte: Number(maxPrice) };
+    if (minPrice && !isNaN(Number(minPrice))) {
+      query.price = { ...query.price, $gte: Number(minPrice) };
+    }
+    if (maxPrice && !isNaN(Number(maxPrice))) {
+      query.price = { ...query.price, $lte: Number(maxPrice) };
+    }
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } }
       ];
     }
+
+    // Sorting
     if (sort === 'price_asc') sortOption = { price: 1 };
     else if (sort === 'price_desc') sortOption = { price: -1 };
     else if (sort === 'newest') sortOption = { createdAt: -1 };
+    else if (sort === 'bestsellers') {
+      // Add logic for bestsellers if you have a field (e.g., sales count)
+      sortOption = { sales: -1 }; // Placeholder; adjust based on your schema
+    }
 
     console.log('Mongo Query:', query, 'Sort:', sortOption);
 
