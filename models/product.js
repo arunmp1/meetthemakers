@@ -1,4 +1,3 @@
-// ./models/product.js
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
@@ -39,7 +38,7 @@ const productSchema = new mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
-        required: true // Made required since admin route depends on it
+        required: true
     },
     ratings: [{
         user: {
@@ -59,8 +58,8 @@ const productSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now // Explicitly defined instead of relying on timestamps
+        default: Date.now
     }
-}, { timestamps: false }); // Set to false since we defined createdAt manually
+}, { timestamps: false });
 
-module.exports = mongoose.model('product', productSchema);
+module.exports = mongoose.model('products', productSchema); // Changed from 'product' to 'products'
