@@ -85,11 +85,12 @@
               </a>
             <% } %>
             <% if (order) { %>
-              <a href="/Admin/orders/<%= order._id %>/delete" 
-                 class="btn btn-sm btn-outline-danger"
-                 onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
-                Delete Order
-              </a>
+              <form action="/Admin/orders/<%= order._id %>/delete" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
+                  Delete Order
+                </button>
+              </form>
             <% } %>
           </div>
         </div>
@@ -149,7 +150,7 @@
                             <td>
                               <div class="d-flex align-items-center">
                                 <% if (item.product && item.product.images && item.product.images.length > 0) { %>
-                                  <img src="<%= item.product.images[0] %>" class="product-image me-2" alt="<%= item.product.name || 'Product' %>">
+                                  <img src="data:<%= item.product.images[0].contentType %>;base64,<%= item.product.images[0].data.toString('base64') %>" class="product-image me-2" alt="<%= item.product.name || 'Product' %>">
                                 <% } %>
                                 <span><%= item.product ? item.product.name || 'Product not found' : 'Product not found' %></span>
                               </div>
