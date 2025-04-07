@@ -18,6 +18,9 @@ const { allowedNodeEnvironmentFlags } = require('process')
 const orderModel = require('./models/order')
 const { profile } = require('console')
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const ejs = require('ejs')
+const fs = require('fs')
+const pdf = require('html-pdf')
 require("dotenv").config();
 
 
