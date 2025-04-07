@@ -1,0 +1,263 @@
+<!-- views/invoice-pdf.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice #<%= invoiceNumber %></title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      font-size: 12px;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 20px;
+    }
+    .company-info {
+      float: left;
+      width: 50%;
+    }
+    .company-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+    .invoice-details {
+      float: right;
+      width: 40%;
+      text-align: right;
+    }
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    .invoice-id {
+      font-size: 16px;
+      font-weight: bold;
+      color: #3498db;
+      margin-bottom: 5px;
+    }
+    .addresses {
+      margin-bottom: 30px;
+    }
+    .billing-info {
+      float: left;
+      width: 45%;
+    }
+    .shipping-info {
+      float: right;
+      width: 45%;
+    }
+    .info-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 3px;
+    }
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .items-table th {
+      background-color: #f8f9fa;
+      text-align: left;
+      padding: 8px;
+      border-bottom: 2px solid #eee;
+      font-size: 12px;
+    }
+    .items-table td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+    }
+    .items-table tr:last-child td {
+      border-bottom: none;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .totals {
+      width: 40%;
+      float: right;
+    }
+    .total-row {
+      clear: both;
+      margin-bottom: 5px;
+    }
+    .total-label {
+      float: left;
+      width: 60%;
+      text-align: right;
+      padding-right: 10px;
+    }
+    .total-value {
+      float: right;
+      width: 35%;
+      text-align: right;
+    }
+    .grand-total {
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 8px;
+      border-top: 2px solid #eee;
+      padding-top: 5px;
+    }
+    .payment-info {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      clear: both;
+    }
+    .status-paid, .status-not-paid {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .status-paid {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status-not-paid {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 11px;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header with Logo and Invoice Details -->
+    <div class="invoice-header clearfix">
+      <div class="company-info">
+        <div class="company-name">MeetTheMakers</div>
+        <div>Christ University</div>
+        <div>Business City, 12345</div>
+        <div>Phone: +91 70251 61244</div>
+        <div>Email: meetthemakers630@gmail.com</div>
+      </div>
+      <div class="invoice-details">
+        <div class="invoice-id">Invoice #<%= invoiceNumber %></div>
+        <div>Order Date: <%= orderDate %></div>
+        <div>Order Time: <%= orderTime %></div>
+        <div>Order ID: #<%= order._id.toString().substring(0, 8) %></div>
+        <div>
+          <span class="<%= order.isPaid ? 'status-paid' : 'status-not-paid' %>">
+            <%= order.isPaid ? 'PAID' : 'UNPAID' %>
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Customer and Shipping Information -->
+    <div class="addresses clearfix">
+      <div class="billing-info">
+        <div class="info-title">Customer Information</div>
+        <div><%= order.user.name %></div>
+        <div><%= order.user.email %></div>
+      </div>
+      
+      <div class="shipping-info">
+        <div class="info-title">Shipping Address</div>
+        <div><%= order.shippingAddress.street %></div>
+        <div><%= order.shippingAddress.city %>, <%= order.shippingAddress.postalCode %></div>
+        <div><%= order.shippingAddress.country %></div>
+      </div>
+    </div>
+    
+    <!-- Order Items Table -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width: 40%;">Product</th>
+          <th style="width: 15%;">Quantity</th>
+          <th style="width: 20%;">Unit Price</th>
+          <th style="width: 25%;" class="text-right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.orderItems.forEach(function(item) { %>
+          <tr>
+            <td>
+              <% if (item.product && item.product.name) { %>
+                <%= item.product.name %>
+              <% } else { %>
+                Product 
+              <% } %>
+            </td>
+            <td><%= item.quantity %></td>
+            <td>₹<%= item.price.toFixed(2) %></td>
+            <td class="text-right">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    
+    <!-- Totals Section -->
+    <div class="totals clearfix">
+      <div class="total-row clearfix">
+        <div class="total-label">Subtotal:</div>
+        <div class="total-value">₹<%= itemsTotal %></div>
+      </div>
+      <div class="total-row clearfix">
+        <div class="total-label">Shipping:</div>
+        <div class="total-value">₹<%= order.shippingPrice.toFixed(2) %></div>
+      </div>
+      <div class="total-row clearfix">
+        <div class="total-label">Tax:</div>
+        <div class="total-value">₹<%= order.taxPrice.toFixed(2) %></div>
+      </div>
+      <div class="total-row grand-total clearfix">
+        <div class="total-label">Grand Total:</div>
+        <div class="total-value">₹<%= order.totalPrice.toFixed(2) %></div>
+      </div>
+    </div>
+    
+    <!-- Payment Information -->
+    <div class="payment-info">
+      <div class="info-title">Payment Information</div>
+      <div>Method: <%= order.paymentMethod %></div>
+      <% if (order.isPaid) { %>
+        <div>Paid On: <%= new Date(order.paidAt).toLocaleString() %></div>
+        <% if (order.paymentResult) { %>
+          <div>Transaction ID: <%= order.paymentResult.id %></div>
+        <% } %>
+      <% } %>
+    </div>
+    
+    <!-- Footer with Thank You Message -->
+    <div class="footer">
+      <p>This invoice was generated automatically. Thank you for your business!</p>
+      <% if (!order.isPaid) { %>
+        <p>Please complete payment to finalize your order.</p>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
