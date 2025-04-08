@@ -10,6 +10,26 @@
   --transition: all 0.3s ease;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Hide browser scrollbar */
+  }
+
+  .fullscreen-container {
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+    display: flex;
+    flex-direction: column; /* Stack content vertically for non-admin pages */
+    overflow: hidden;
+  }
+
+  .main-content {
+    flex-grow: 1; /* Take available space */
+    overflow-y: auto; /* Scroll within content if needed */
+    padding: 20px;
+  }
 * {
   margin: 0;
   padding: 0;
