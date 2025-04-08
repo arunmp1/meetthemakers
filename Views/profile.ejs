@@ -66,7 +66,7 @@
                             <% } else if (activity.type === 'post' || activity.type === 'requirement') { %>
                                 <strong>New Like:</strong> Someone liked your "<%= activity.title %>"
                             <% } else if (activity.type === 'order_placed') { %>
-                                <strong>Order Placed:</strong> You placed an order for $<%= activity.amount %>
+                                <strong>Order Placed:</strong> You placed an order for ₹<%= activity.amount %>
                             <% } else if (activity.type === 'order_status') { %>
                                 <strong>Order Update:</strong> Your order #<%= activity.orderId %> has been <%= activity.status %>
                             <% } %>
