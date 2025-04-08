@@ -8,105 +8,94 @@
     <link rel="stylesheet" href="/styles/mainPages/index.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
 </head>
 <body>
-    <div class="navbar">
-        <div class="logo">
-            <img src="/images/logo/meetthemakerslogo.png" width="200px">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/discovers">Product Creation Hub</a></li>
-                <li><a href="/creation">Unique Product Pioneers</a></li>
-                <li><a href="/products">Market</a></li>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/contactus">Contact Us</a></li>
-                <% if(!locals.user){ %>
-                    <li><a href="/signup">Sign Up</a></li>
-                
-                    <li><a href="/login">Log In</a></li>
-                <% }else{ %>
-                    <li><a href="/profile">Hello <%= user.name %></a></li>
-                    <li class="cart-icon">
-                        <a href="/cart">
-                            <i class="fas fa-shopping-cart"></i>
-                        </a>
-                    </li>
-                    <li><a href="/logout">Log Out</a></li>
-                <% } %>
-    
-            </ul>
-        </nav>
-    </div>
-
-    <div class="header">
-        <div>
-            <h1>Give Wings to Your Creativity!</h1>
-            <p>Monetize your creativity and connect with buyers worldwide.</p>
-            <p>Are you someone who wishes to earn from your creativity?<br>Yes! You are in the right place</p>
-         
-        </div>
-    </div>
-
-    <div class="quotes">
-        <p>"Creativity is intelligence having fun." – Albert Einstein</p>
-        <p>"The world always seems brighter when you've just made something that wasn't there before." – Neil Gaiman</p>
-    </div>  
-
-    <div class="features">
-        <div class="feature-box">
-            <img src="/images/homepage/handmade.jpg" width="100%">
-            <h3>Handmade Products</h3>
-            <p>Discover unique, handcrafted creations from skilled makers.</p>
-        </div>
-        <div class="feature-box">
-            <img src="/images/homepage/community.jpg" width="100%">
-            <h3>Creative Community</h3>
-            <p>Join a vibrant community of artists and crafters.</p>
-        </div>
-        <div class="feature-box">
-            <img src="/images/homepage/globalmarket.jpg" width="100%">
-            <h3>Global Marketplace</h3>
-            <p>Sell your creations worldwide with ease.</p>
-        </div>
-    </div>
-
-
-
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-col">
-                <h3>MeetTheMakers</h3>
-                <p>A global marketplace for unique, handmade items. We connect creative makers with customers looking for something special.</p>
+    <div class="fullscreen-container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="/images/logo/meetthemakerslogo.png" width="200px">
             </div>
-            <div class="footer-col">
-                <h3>Want to list your products in our market</h3>
-                <p>Email us on: <h4>meetthemakers630@gmail.com</h4></p>
-            </div>
-            <div class="footer-col">
-                <h3>Quick Links</h3>
+            <nav>
                 <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/discovers">Product Creation Hub</a></li>
+                    <li><a href="/creation">Unique Product Pioneers</a></li>
+                    <li><a href="/products">Market</a></li>
                     <li><a href="/about">About Us</a></li>
-
+                    <li><a href="/contactus">Contact Us</a></li>
+                    <% if(!locals.user){ %>
+                        <li><a href="/signup">Sign Up</a></li>
+                        <li><a href="/login">Log In</a></li>
+                    <% }else{ %>
+                        <li><a href="/profile">Hello <%= user.name %></a></li>
+                        <li class="cart-icon">
+                            <a href="/cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+                        </li>
+                        <li><a href="/logout">Log Out</a></li>
+                    <% } %>
                 </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Give Wings to Your Creativity!</h1>
+                    <p>Monetize your creativity and connect with buyers worldwide.</p>
+                    <p>Are you someone who wishes to earn from your creativity?<br>Yes! You are in the right place</p>
+                </div>
             </div>
-            <div class="footer-col">
-
-                </ul>
+            <div class="quotes">
+                <p>"Creativity is intelligence having fun." – Albert Einstein</p>
+                <p>"The world always seems brighter when you've just made something that wasn't there before." – Neil Gaiman</p>
             </div>
+            <div class="features">
+                <div class="feature-box">
+                    <img src="/images/homepage/handmade.jpg" width="100%">
+                    <h3>Handmade Products</h3>
+                    <p>Discover unique, handcrafted creations from skilled makers.</p>
+                </div>
+                <div class="feature-box">
+                    <img src="/images/homepage/community.jpg" width="100%">
+                    <h3>Creative Community</h3>
+                    <p>Join a vibrant community of artists and crafters.</p>
+                </div>
+                <div class="feature-box">
+                    <img src="/images/homepage/globalmarket.jpg" width="100%">
+                    <h3>Global Marketplace</h3>
+                    <p>Sell your creations worldwide with ease.</p>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-col">
+                        <h3>MeetTheMakers</h3>
+                        <p>A global marketplace for unique, handmade items. We connect creative makers with customers looking for something special.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Want to list your products in our market</h3>
+                        <p>Email us on: <h4>meetthemakers630@gmail.com</h4></p>
+                    </div>
+                    <div class="footer-col">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="/about">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+                <div class="copyright">
+                    <p>© 2024 MeetTheMakers. All rights reserved. | Designed with <span class="heart">❤</span> by the MeetTheMakers team.</p>
+                </div>
+            </footer>
         </div>
-        <div class="social-links">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-pinterest-p"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-        <div class="copyright">
-            <p>© 2024 MeetTheMakers. All rights reserved. | Designed with <span class="heart">❤</span> by the MeetTheMakers team.</p>
-        </div>
-    </footer>
+    </div>
 </body>
 </html>
