@@ -30,10 +30,10 @@ html, body {
     overflow-y: auto; /* Scroll within content if needed */
     padding: 20px;
   }
+
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
