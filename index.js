@@ -1212,6 +1212,26 @@ app.post('/Admin/product/create', adminMiddleWare, upload.array('images', 5), as
   }
 });
 
+app.get('/Admin/products/:id/delete', adminMiddleWare, async function(request, response) {
+  try {
+    const productId = request.params.id;
+    
+    // First, delete the product
+    await productModel.findByIdAndDelete(productId);
+    
+    // Then, find all carts containing this product and remove it from them
+    await cartModel.updateMany(
+      { "cartItems.products": productId }, 
+      { $pull: { cartItems: { products: productId } } }
+    );
+    
+    // Optionally, log how many carts were affected
+    response.redirect('/Admin/products');
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    response.status(500).send("Error deleting product");
+  }
+});
 
 
 app.post('/Admin/create', async function(request, response) {
