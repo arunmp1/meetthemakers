@@ -50,9 +50,6 @@ MeetTheMakers introduces several features that distinguish it from existing plat
 |----------------------------------|--------------------------|
 | Buyer-driven requirement posting | ✅ Supported             |
 | Seller blog-style product posts  | ✅ Supported             |
-| Real-time chat functionality     | ❌ Not included          |
-| Payment gateway integration      | ❌ Not included          |
-| Frontend framework usage         | ❌ Not used (HTML/CSS only) |
 | Administrative content control   | ✅ Supported             |
 
 > *The intentional exclusion of real-time chat and payment gateway features ensures simplicity, improved maintainability, and greater flexibility for integration in future iterations.*
