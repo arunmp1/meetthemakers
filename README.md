@@ -130,7 +130,7 @@ The platform is deployed using [Vercel](https://vercel.com/), which supports:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/meetthemakers.git
+git clone https://github.com/arunmp1/meetthemakers_app
 cd meetthemakers
 
 # Install backend dependencies
