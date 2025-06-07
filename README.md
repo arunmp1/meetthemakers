@@ -52,7 +52,6 @@ MeetTheMakers introduces several features that distinguish it from existing plat
 | Seller blog-style product posts  | ✅ Supported             |
 | Administrative content control   | ✅ Supported             |
 
-> *The intentional exclusion of real-time chat and payment gateway features ensures simplicity, improved maintainability, and greater flexibility for integration in future iterations.*
 
 ---
 
